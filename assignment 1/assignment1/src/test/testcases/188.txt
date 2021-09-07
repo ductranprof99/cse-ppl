@@ -1,0 +1,6 @@
+
+        Shape(float length, width) {
+                this.length := length;
+                this.width := width;
+        }
+        

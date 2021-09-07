@@ -1,3 +1,4 @@
+/* 1811984 */
 grammar BKOOL;
 
 @lexer::header {
@@ -8,7 +9,7 @@ options{
 	language=Python3;
 }
 
-program  : class_declare EOF ;
+program  : class_declare+ EOF ;
 
 
 // declarations
@@ -84,7 +85,7 @@ statement:  (assignment_satement
 assignment_satement: lhs ASSIGN_EQ exp;
 
 lhs: ID
-   | operands DOT_OP ID
+   | operands DOT ID
    | operands index_represent
    ;
 
@@ -101,10 +102,10 @@ break_statement: BREAK ;
 continue_statement: CONTINUE;
 return_statement: RETURN return_exp ;
 
-method_invo_statement: prefix_method_invo ID DOT_OP ID list_args_wrapped ;
+method_invo_statement: prefix_method_invo ID DOT ID list_args_wrapped ;
 
 prefix_method_invo: | ID
-                    | prefix_method_invo DOT_OP ID list_args_wrapped
+                    | prefix_method_invo DOT ID list_args_wrapped
                     | ROUND_OPEN exp ROUND_CLOSE
                     | prefix_method_invo index_represent
                     | THIS
@@ -128,8 +129,8 @@ exp3: (NOT | ADD | SUB) exp3 | operands;
 
 operands: literals
         | ID
-        | operands DOT_OP ID
-        | operands DOT_OP ID list_args_wrapped
+        | operands DOT ID
+        | operands DOT ID list_args_wrapped
         | ROUND_OPEN exp ROUND_CLOSE
         | operands index_represent
         | THIS
@@ -194,8 +195,7 @@ NOT: '!';
 AND: '&&';
 OR: '||';
 CONCAT: '^';
-DOT_OP: '.';
-fragment DOT: '.';
+DOT: '.';
 NEW: 'new';
 COLON: ':';
 ASSIGN_EQ: ':=';
@@ -222,7 +222,7 @@ array_literal: CURLY_OPEN FLOAT_LIT (COMMA FLOAT_LIT)*
              | CURLY_OPEN boolean_literal (COMMA boolean_literal)*
              ;
 FLOAT_LIT : DIGIT+ DOT (DIGIT | EXPONENT)*
-	      | DIGIT* DOT DIGIT+ EXPONENT?
+	      | DIGIT+ DOT DIGIT+ EXPONENT?
 	      | DIGIT+ EXPONENT
 	      ;
 STRING_LIT: '"' STR_CHAR* '"'
@@ -239,12 +239,15 @@ ID: [_a-zA-Z][_a-zA-Z0-9]* ;
 
 COMMENT: (MUL_COMMENT|ONE_COMMENT) -> skip;
 WS : [ \f\t\r\n]+ -> skip ; // skip spaces, tabs, newlines
-ERROR_CHAR: .
+
+
+UNCLOSE_STRING: '"' STR_CHAR*
 	{
-		raise ErrorToken(self.text)
+		y = str(self.text)
+		raise UncloseString(y[1:])
 	}
 	;
-UNCLOSE_STRING: .;
+
 ILLEGAL_ESCAPE: '"' STR_CHAR* ESC_ILLEGAL
 	{
 		y = str(self.text)
@@ -254,14 +257,23 @@ ILLEGAL_ESCAPE: '"' STR_CHAR* ESC_ILLEGAL
 
 
 //Fragment
-fragment EXPONENT: [eE] SUB? DIGIT+ ;
-fragment STR_CHAR: ~[\b\t\n\f\r"'\\] | ESC_SEQ ;
+fragment EXPONENT: [eE] (SUB|ADD)? DIGIT+ ;
+fragment STR_CHAR: ( '\\' [btnfr"\\] | ~[\n\r"\\] ) ;
+fragment ESC_ILLEGAL
+    : '\\'~[bfrnt"\\]
+    | '\''~'"'
+    ;
 
 fragment ESC_SEQ: '\\' [btnfr"'\\] ;
-fragment ESC_ILLEGAL: '\\' ~[btnfr"'\\] | ~'\\' ;
+
 
 fragment MUL_COMMENT: '/*' (.)*? '*/';
 fragment ONE_COMMENT: '#' ~[\r\n]*;
 fragment UNDERSCORE: '_';
 
 fragment DIGIT: [0-9] ;
+ERROR_CHAR: .
+	{
+		raise ErrorToken(self.text)
+	}
+	;

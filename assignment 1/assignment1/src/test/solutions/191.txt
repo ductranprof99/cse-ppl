@@ -1,0 +1,1 @@
+class,Ex2,{,void,main,(,),{,Shape,s,;,s,:=,new,Rectangle,(,3,,,4,),;,},},<EOF>
