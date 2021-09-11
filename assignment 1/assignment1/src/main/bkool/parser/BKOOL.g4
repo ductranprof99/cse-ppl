@@ -24,7 +24,7 @@ attribute_declare: field type_attribute var_declare ( COMMA var_declare )* SEMI;
 
 field: | STATIC | FINAL | STATIC FINAL | FINAL STATIC;
 
-method_declare: STATIC ? return_type ROUND_OPEN list_params ROUND_CLOSE block_statement;
+method_declare: STATIC ? return_type ID ROUND_OPEN list_params ROUND_CLOSE block_statement;
 
 constructor_declare: ID ROUND_OPEN list_params ROUND_CLOSE  block_statement;
 
@@ -40,7 +40,7 @@ list_params: | parameter (SEMI parameter)* ;
 
 parameter: parameter_type ID (COMMA ID)*;
 
-parameter_type: (primitive_type ~VOID) | array_type | class_type ;
+parameter_type: type_attribute;
 
 
 
@@ -48,13 +48,13 @@ parameter_type: (primitive_type ~VOID) | array_type | class_type ;
 
 //type
 
-return_type: primitive_type | array_type | class_type;
+return_type: primitive_type | class_type | array_type ;
 
-type_attribute: class_type| array_type | primitive_type;
+type_attribute: class_type | primitive_type |  array_type;
+
+array_type: (primitive_type|class_type) SQUARE_OPEN INTEGER_LIT SQUARE_CLOSE;
 
 class_type: ID;
-
-array_type: (primitive_type ~VOID) SQUARE_OPEN INTEGER_LIT SQUARE_CLOSE ;
 
 primitive_type: INTEGER | FLOAT | BOOLEAN | STRING | VOID ;
 
@@ -65,35 +65,36 @@ primitive_type: INTEGER | FLOAT | BOOLEAN | STRING | VOID ;
 
 // statements
 
-block_statement: CURLY_CLOSE block_var_declare* statement* CURLY_CLOSE;
+block_statement: CURLY_OPEN local_attribute * statement* CURLY_CLOSE;
 
-block_var_declare: (FINAL)? type_attribute var_declare ( COMMA var_declare )* SEMI;
+local_attribute: (FINAL)? type_attribute var_declare ( COMMA var_declare )* SEMI;
 
 //------------------------------------------------
 
-statement:  (assignment_satement
+statement:  assignment_satement SEMI
          |  if_statement
          |  for_statement
-         |  break_statement
-         |  continue_statement
-         |  return_statement
-         |  method_invo_statement
-         ) SEMI;  // end with semicolon
+         |  break_statement SEMI
+         |  continue_statement SEMI
+         |  return_statement SEMI
+         |  method_invo_statement SEMI;  // end with semicolon
 
 // ------- assignment -------------
 
 assignment_satement: lhs ASSIGN_EQ exp;
 
-lhs: ID
-   | operands DOT ID
-   | operands index_represent
-   ;
+lhs: ID | operands index_represent | prefix_attribute_invo DOT ID ;
 
-
+prefix_attribute_invo: | ID
+                       | prefix_attribute_invo DOT ID list_args_wrapped
+                       | ROUND_OPEN exp ROUND_CLOSE
+                       | prefix_attribute_invo index_represent
+                       | THIS
+                       ;
 
 if_statement: IF bool_exp THEN statement (ELSE statement)? ;
 
-for_statement: FOR   ASSIGN_EQ int_exp (TO | DOWNTO) int_exp DO loop_block_statement;
+for_statement: FOR ID ASSIGN_EQ int_exp (TO | DOWNTO) int_exp DO loop_block_statement;
 
 loop_block_statement: CURLY_OPEN statement+ CURLY_CLOSE
                     | statement;
@@ -102,14 +103,9 @@ break_statement: BREAK ;
 continue_statement: CONTINUE;
 return_statement: RETURN return_exp ;
 
-method_invo_statement: prefix_method_invo ID DOT ID list_args_wrapped ;
+method_invo_statement: (literals | ID  | operands DOT ID  | operands DOT ID list_args_wrapped  | ROUND_OPEN exp ROUND_CLOSE  | operands index_represent  | THIS | NIL) DOT ID list_args_wrapped ;
 
-prefix_method_invo: | ID
-                    | prefix_method_invo DOT ID list_args_wrapped
-                    | ROUND_OPEN exp ROUND_CLOSE
-                    | prefix_method_invo index_represent
-                    | THIS
-                    ;
+
 // expressions
 
 bool_exp: exp;
@@ -135,6 +131,7 @@ operands: literals
         | operands index_represent
         | THIS
         | obj_create
+        | NIL
         ;
 
 index_represent: SQUARE_OPEN exp SQUARE_CLOSE;
@@ -212,15 +209,13 @@ COMMA: ',';
 
 
 // another skip-error tokens and literals
-literals: INTEGER_LIT | FLOAT_LIT | STRING_LIT | boolean_literal | array_literal ;
+literals: literal_replica | array_literal  ;
 
 boolean_literal: TRUE | FALSE ;
 
-array_literal: CURLY_OPEN FLOAT_LIT (COMMA FLOAT_LIT)*
-             | CURLY_OPEN INTEGER_LIT (COMMA INTEGER_LIT)*
-             | CURLY_OPEN STRING_LIT (COMMA STRING_LIT)*
-             | CURLY_OPEN boolean_literal (COMMA boolean_literal)*
-             ;
+array_literal: CURLY_OPEN literal_replica (COMMA literal_replica )* CURLY_CLOSE;
+
+literal_replica: INTEGER_LIT | FLOAT_LIT | STRING_LIT | boolean_literal;
 FLOAT_LIT : DIGIT+ DOT (DIGIT | EXPONENT)*
 	      | DIGIT+ DOT DIGIT+ EXPONENT?
 	      | DIGIT+ EXPONENT

@@ -1,1 +1,4 @@
-int main( {}
+class Test {
+            int a = "addmaximum",b = 0001.18;
+            void aneue,onichann= 1213;
+        }

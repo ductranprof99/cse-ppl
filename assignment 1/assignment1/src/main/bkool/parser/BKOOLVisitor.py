@@ -74,13 +74,13 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by BKOOLParser#class_type.
-    def visitClass_type(self, ctx:BKOOLParser.Class_typeContext):
+    # Visit a parse tree produced by BKOOLParser#array_type.
+    def visitArray_type(self, ctx:BKOOLParser.Array_typeContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by BKOOLParser#array_type.
-    def visitArray_type(self, ctx:BKOOLParser.Array_typeContext):
+    # Visit a parse tree produced by BKOOLParser#class_type.
+    def visitClass_type(self, ctx:BKOOLParser.Class_typeContext):
         return self.visitChildren(ctx)
 
 
@@ -94,8 +94,8 @@ class BKOOLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by BKOOLParser#block_var_declare.
-    def visitBlock_var_declare(self, ctx:BKOOLParser.Block_var_declareContext):
+    # Visit a parse tree produced by BKOOLParser#local_attribute.
+    def visitLocal_attribute(self, ctx:BKOOLParser.Local_attributeContext):
         return self.visitChildren(ctx)
 
 
@@ -111,6 +111,11 @@ class BKOOLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by BKOOLParser#lhs.
     def visitLhs(self, ctx:BKOOLParser.LhsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#prefix_attribute_invo.
+    def visitPrefix_attribute_invo(self, ctx:BKOOLParser.Prefix_attribute_invoContext):
         return self.visitChildren(ctx)
 
 
@@ -146,11 +151,6 @@ class BKOOLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by BKOOLParser#method_invo_statement.
     def visitMethod_invo_statement(self, ctx:BKOOLParser.Method_invo_statementContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by BKOOLParser#prefix_method_invo.
-    def visitPrefix_method_invo(self, ctx:BKOOLParser.Prefix_method_invoContext):
         return self.visitChildren(ctx)
 
 
@@ -226,6 +226,11 @@ class BKOOLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by BKOOLParser#array_literal.
     def visitArray_literal(self, ctx:BKOOLParser.Array_literalContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by BKOOLParser#literal_replica.
+    def visitLiteral_replica(self, ctx:BKOOLParser.Literal_replicaContext):
         return self.visitChildren(ctx)
 
 

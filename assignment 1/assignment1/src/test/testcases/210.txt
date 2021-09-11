@@ -1,0 +1,5 @@
+
+            class foo {
+                type[7857] n = this.Shape(x.foo(5)[4]*(!m) + (s >= m || m+-n));
+            }
+            

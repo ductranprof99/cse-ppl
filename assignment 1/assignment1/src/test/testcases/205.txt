@@ -1,0 +1,10 @@
+class Test {
+            int a = "addmaximum",b = 0001.18;
+            static void aneue,onichann= 1213;
+            void innuedo() {
+            }
+            Shape(float radius,width){
+                             this.length := length;
+                          this.width := width;
+                 }
+        }

@@ -19,25 +19,28 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("123a123", "123,a123,<EOF>", 104))
 
     def test_id(self):
-        self.assertTrue(TestLexer.test("_acs", "_acs,<EOF>", 105))
+        self.assertTrue(TestLexer.test("___________", "_acs,<EOF>", 105))
 
     def test_id1(self):
-        self.assertTrue(TestLexer.test("AAAxx_xxsc", "AAAxx_xxsc,<EOF>", 106))
+        self.assertTrue(TestLexer.test("asdf____12312321______", "AAAxx_xxsc,<EOF>", 106))
 
     def test_id2(self):
-        self.assertTrue(TestLexer.test("AaAaA___aaaaaABF", "AaAaA___aaaaaABF,<EOF>", 107))
+        self.assertTrue(TestLexer.test(": =", "AaAaA___aaaaaABF,<EOF>", 107))
 
     def test_intlit(self):
         self.assertTrue(TestLexer.test("123", "123,<EOF>", 108))
 
     def test_intlit1(self):
-        self.assertTrue(TestLexer.test("9.0", "9.0,<EOF>", 109))
+        self.assertTrue(TestLexer.test("000000000", "123,<EOF>", 109))
+
+    def test_intlit2(self):
+        self.assertTrue(TestLexer.test("1.0", "9.0,<EOF>", 110))
 
     def test_floatlit(self):
-        self.assertTrue(TestLexer.test("12e2", "12e2,<EOF>", 110))
+        self.assertTrue(TestLexer.test("102e3", "12e2,<EOF>", 111))
 
     def test_floatlit1(self):
-        self.assertTrue(TestLexer.test("128e+12", "128e+12,<EOF>", 111))
+        self.assertTrue(TestLexer.test("102e-3", "128e+12,<EOF>", 111))
 
     def test_floatlit2(self):
         self.assertTrue(TestLexer.test("1.", "1.,<EOF>", 112))
@@ -283,7 +286,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("a `= b", "a,Error Token `", 172))
 
     def test_73(self):
-        self.assertTrue(TestLexer.test(""" "str1" "str2" abc "str3" """, "str1,str2,abc,str3,<EOF>", 173))
+        self.assertTrue(TestLexer.test(""" "1"  abc "2" """, "str1,str2,abc,str3,<EOF>", 173))
 
     def test_74(self):
         self.assertTrue(TestLexer.test(""" "Ligal\\f" """, """Ligal\\f,<EOF>""", 174))
@@ -292,16 +295,16 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(""" "Ligal\\\ " """, """Ligal\\\ ,<EOF>""", 175))
 
     def test_76(self):
-        self.assertTrue(TestLexer.test(""" "Illegal \\m \\n""", """Illegal Escape In String: Illegal \\m""", 176))
+        self.assertTrue(TestLexer.test(""" "Illegal \\k """, """Illegal Escape In String: Illegal \\m""", 176))
 
     def test_77(self):
-        self.assertTrue(TestLexer.test(""" "Illegal ' escape """, """Unclosed String: Illegal ' escape """, 177))
+        self.assertTrue(TestLexer.test(""" "asdfa ' escaasdfasdpe """, """Unclosed String: Illegal ' escape """, 177))
 
     def test_78(self):
-        self.assertTrue(TestLexer.test("a*3+b   - 1", "a,*,3,+,b,-,1,<EOF>", 178))
+        self.assertTrue(TestLexer.test("a*3+afdsfb   - 1", "a,*,3,+,b,-,1,<EOF>", 178))
 
     def test_79(self):
-        self.assertTrue(TestLexer.test("a3%b2b", "a3,%,b2b,<EOF>", 179))
+        self.assertTrue(TestLexer.test("a3%dasfdb2b", "a3,%,b2b,<EOF>", 179))
 
     def test_80(self):
         self.assertTrue(TestLexer.test("a =f(2+b[3])", "a,=,f,(,2,+,b,[,3,],),<EOF>", 180))
@@ -419,7 +422,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(""" "Ok I am fine ~" """, """Ok I am fine ~,<EOF>""", 199))
 
     def test_100(self):
-        self.assertTrue(TestLexer.test("_", "_,<EOF>", 200))
+        self.assertTrue(TestLexer.test(""" "asdfasdfasdf\r " """, "_,<EOF>", 200))
 
         """ class Example2 extends ABC {
 float length,width;
