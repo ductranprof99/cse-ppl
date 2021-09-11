@@ -65,19 +65,19 @@ primitive_type: INTEGER | FLOAT | BOOLEAN | STRING | VOID ;
 
 // statements
 
-block_statement: CURLY_OPEN local_attribute * statement* CURLY_CLOSE;
+block_statement: CURLY_OPEN (local_attribute*) (statement*) CURLY_CLOSE;
 
 local_attribute: (FINAL)? type_attribute var_declare ( COMMA var_declare )* SEMI;
 
 //------------------------------------------------
 
-statement:  assignment_satement SEMI
-         |  if_statement
+statement: if_statement
          |  for_statement
          |  break_statement SEMI
          |  continue_statement SEMI
          |  return_statement SEMI
-         |  method_invo_statement SEMI;  // end with semicolon
+         |  method_invo_statement SEMI
+         | assignment_satement SEMI;  // end with semicolon
 
 // ------- assignment -------------
 
@@ -125,10 +125,10 @@ exp3: (NOT | ADD | SUB) exp3 | operands;
 
 operands: literals
         | ID
+        | operands index_represent
         | operands DOT ID
         | operands DOT ID list_args_wrapped
         | ROUND_OPEN exp ROUND_CLOSE
-        | operands index_represent
         | THIS
         | obj_create
         | NIL
@@ -140,7 +140,7 @@ obj_create: NEW ID list_args_wrapped;
 
 list_args_wrapped:  ROUND_OPEN (list_exps_as_args | ) ROUND_CLOSE;
 
-list_exps_as_args: exp ( COMMA exp )*;
+list_exps_as_args:<assoc=right> exp ( COMMA exp )*;
 
 
 
@@ -216,17 +216,16 @@ boolean_literal: TRUE | FALSE ;
 array_literal: CURLY_OPEN literal_replica (COMMA literal_replica )* CURLY_CLOSE;
 
 literal_replica: INTEGER_LIT | FLOAT_LIT | STRING_LIT | boolean_literal;
-FLOAT_LIT : DIGIT+ DOT (DIGIT | EXPONENT)*
-	      | DIGIT+ DOT DIGIT+ EXPONENT?
-	      | DIGIT+ EXPONENT
-	      ;
+FLOAT_LIT : [0-9]+(('.'[0-9]*)|(('.'[0-9]*)?(('E'|'e')('+'|'-')?[0-9]+)));
+INTEGER_LIT: [0-9]+;
+
 STRING_LIT: '"' STR_CHAR* '"'
 	{
 		y = str(self.text)
 		self.text = y[1:-1]
 	}
 	;
-INTEGER_LIT: DIGIT+;
+
 ID: [_a-zA-Z][_a-zA-Z0-9]* ;
 
 
@@ -252,7 +251,7 @@ ILLEGAL_ESCAPE: '"' STR_CHAR* ESC_ILLEGAL
 
 
 //Fragment
-fragment EXPONENT: [eE] (SUB|ADD)? DIGIT+ ;
+
 fragment STR_CHAR: ( '\\' [btnfr"\\] | ~[\n\r"\\] ) ;
 fragment ESC_ILLEGAL
     : '\\'~[bfrnt"\\]
@@ -266,7 +265,7 @@ fragment MUL_COMMENT: '/*' (.)*? '*/';
 fragment ONE_COMMENT: '#' ~[\r\n]*;
 fragment UNDERSCORE: '_';
 
-fragment DIGIT: [0-9] ;
+
 ERROR_CHAR: .
 	{
 		raise ErrorToken(self.text)
