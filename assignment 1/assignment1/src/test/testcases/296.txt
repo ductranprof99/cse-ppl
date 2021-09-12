@@ -1,0 +1,10 @@
+
+        class ABC extends DEF{
+            void method(){
+                if "" then
+                if 1 then
+                    inp := [234]fsfsg + 13 \. 124;
+                else return 0;
+            }
+        }
+        

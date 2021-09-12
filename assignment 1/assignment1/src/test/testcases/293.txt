@@ -1,0 +1,14 @@
+
+        class Add extends Operator{
+            int main(){
+                {
+                    sys.print("s = ", this.accumulated(0, 10, 2e-3));
+                }
+                {
+                    int a = (5 + this.f() * 3 + arr[10]) * 5 \ 8;
+                    b := "123" * "123" , - 2 == "sss";
+                    return a ^ b;
+                }
+            }
+        }
+        

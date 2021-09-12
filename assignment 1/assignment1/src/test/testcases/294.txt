@@ -1,0 +1,14 @@
+
+        class complex extends simple {
+            void nothing_to_return(){
+                sys.print_some_thing();     # print some thing, i dont know
+            }
+
+            int main(){
+                this.nothing_to_return();   /* call method */
+                inp := ppapa[/**4235 dasfj dd 44 **/ this.g(-----------/*/*-----*/----------------this.f())];
+                x := "adf" * {q23, 4, "af"}[Return 45;];
+                return x * inp;
+            }
+        }
+        

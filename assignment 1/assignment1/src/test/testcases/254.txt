@@ -1,0 +1,9 @@
+
+        class Shape {
+            static final float length,width;
+            final static float length,width;
+            static float getArea() {}
+            Shape(float length,width){
+            }
+        }
+        

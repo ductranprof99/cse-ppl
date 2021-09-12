@@ -1,5 +1,5 @@
-class SHap {
-            int get() {
-                a := b[3 - foo(2)];
+class a {
+                float main() {
+                    whatdidyousaytome.me(1*2\5);
+                }
             }
-        }

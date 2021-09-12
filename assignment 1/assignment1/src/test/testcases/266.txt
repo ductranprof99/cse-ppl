@@ -1,0 +1,5 @@
+class SHap {
+            int get() {
+                a := b[3 - foo(2)];
+            }
+        }

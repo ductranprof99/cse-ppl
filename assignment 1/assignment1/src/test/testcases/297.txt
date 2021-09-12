@@ -1,0 +1,9 @@
+
+        class ABC extends DEF{
+            void method(){
+                if "" then
+                in := 123 - 4234 +- 432 || !False;
+                inp := {123, 435, 423} * in;
+            }
+        }
+        

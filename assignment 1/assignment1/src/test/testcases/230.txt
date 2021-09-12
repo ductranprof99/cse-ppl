@@ -1,0 +1,7 @@
+
+        class program {
+            void a(){
+                (this.b[3]).c.foo().big() := 3* foo(a, b);
+            } 
+        }
+        

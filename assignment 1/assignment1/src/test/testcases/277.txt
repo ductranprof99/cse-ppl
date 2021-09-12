@@ -1,0 +1,6 @@
+
+        class simple{
+            final float x = "string \"", y = 1e9;
+            int[5] arr = {1.0e+5, 2e-9, ___, "ab\tc", false};
+        }
+        

@@ -350,7 +350,7 @@ class BKOOLLexer(Lexer):
         if actionIndex == 0:
 
             		y = str(self.text)
-            		self.text = y[1:-1]
+            		self.text = y
             	
      
 

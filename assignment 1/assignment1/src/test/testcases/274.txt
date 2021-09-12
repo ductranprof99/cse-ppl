@@ -1,0 +1,8 @@
+class Example1 {
+                        void main(){
+                            int x;
+                            l[3] := 2*value*2/2-c;
+                            x := io.readInt();
+                            io.writeIntLn(this.factorial(x));
+                        }
+                    }

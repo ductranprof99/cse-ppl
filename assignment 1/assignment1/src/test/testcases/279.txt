@@ -1,0 +1,5 @@
+
+        class simple extends ABC {
+            boolean final = "string \"";
+        }
+        

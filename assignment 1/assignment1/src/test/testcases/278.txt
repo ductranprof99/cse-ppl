@@ -1,0 +1,5 @@
+
+        class simple extends ABC {
+            static final string = "string \"", y = 1e9;
+        }
+        

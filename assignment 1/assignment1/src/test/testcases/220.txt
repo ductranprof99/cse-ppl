@@ -1,0 +1,11 @@
+
+        class Example2 extends ABC {
+            void main(){
+                for x := ((((0||1)))) to something_big do
+                    for x := ((((0||1)))) to something_big do
+                        for x := ((((0||1)))) to something_big do
+                            for x := ((((0||1)))) to something_big do
+                                a:=1;
+            }
+        } 
+        

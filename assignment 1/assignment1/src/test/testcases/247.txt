@@ -1,0 +1,5 @@
+class a {
+                    int main() {
+                        io.writeFloat(1-1*3++2*h\i);
+                    }
+                }

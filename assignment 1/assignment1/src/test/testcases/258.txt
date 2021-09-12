@@ -1,0 +1,10 @@
+
+        class sgrsdrfgsdfgsdfgsgsdfgsfg {
+            final string a;
+            dfasdfasdf(){
+                this.b:=nil;
+            }
+            dfasdfasdf(int adfasdfasdf = suckmyass){
+            }
+        }
+        

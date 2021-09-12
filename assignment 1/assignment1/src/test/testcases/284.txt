@@ -1,0 +1,16 @@
+
+        class Luxubu {
+            final int main = "main";
+
+            void foo(){
+                # pass
+            }
+
+            float main(int n; float m, string str){
+                if n == 0 then
+                    return 1.;
+                else
+                    return n % sys.reduce(m);
+            }
+        }
+        

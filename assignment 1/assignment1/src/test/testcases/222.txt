@@ -1,0 +1,7 @@
+
+        class Example2 extends ABC {
+            void main(){
+                continue;
+            }
+        } 
+        

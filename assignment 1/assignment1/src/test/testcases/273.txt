@@ -1,0 +1,8 @@
+class Example2 extends ABC {
+                        int length,width;
+                        float getArea() {}
+                        Shape(float length,width){
+                            this.length := length;
+                            this.width := width;
+                        }
+                    }

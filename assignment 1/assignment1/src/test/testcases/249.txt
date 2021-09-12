@@ -1,0 +1,7 @@
+
+        class A {
+            int get() {
+                6.foo(7);
+            }
+        }
+        

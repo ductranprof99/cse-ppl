@@ -1,0 +1,22 @@
+
+        class fasdfasdfasdf {
+            static int main = "main";
+
+            float foo(int n; float m, String){
+                if n == 0 then
+                    return 1.;
+                else
+                    return n % sys.reduce(m);
+            }
+
+            void main(){
+                if sys.flag then
+                    this.foo(n, n*m);
+                else
+                {{
+                    c := "akf"[0] + x[{1,2, 4}];
+                    sys.print(c);
+                }}
+            }
+        }
+        

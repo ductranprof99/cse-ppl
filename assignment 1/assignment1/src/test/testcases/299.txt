@@ -1,5 +1,14 @@
-class QuotientRemainder {
-                       static void main(string[2] args) {
-                            5+5 := y;
-                        }
-                    }
+
+        class Add extends Operator {
+            int accumulated(int init; int n, step){
+                int s = init;
+                for i := 0 to n do
+                    s := s + step;
+                return sys.to_string(s, reverse==true);
+            }
+
+            class main extends Main {
+                static int count = 0;
+            }
+        }
+        

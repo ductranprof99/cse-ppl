@@ -20,9 +20,9 @@ members: attribute_declare | method_declare | constructor_declare;
 
 
 
-attribute_declare: field type_attribute var_declare ( COMMA var_declare )* SEMI;
+attribute_declare: field? type_attribute var_declare ( COMMA var_declare )* SEMI;
 
-field: | STATIC | FINAL | STATIC FINAL | FINAL STATIC;
+field: STATIC | FINAL | STATIC FINAL | FINAL STATIC;
 
 method_declare: STATIC ? return_type ID ROUND_OPEN list_params ROUND_CLOSE block_statement;
 
@@ -71,13 +71,14 @@ local_attribute: (FINAL)? type_attribute var_declare ( COMMA var_declare )* SEMI
 
 //------------------------------------------------
 
-statement: if_statement
+statement:  if_statement
          |  for_statement
          |  break_statement SEMI
          |  continue_statement SEMI
          |  return_statement SEMI
          |  method_invo_statement SEMI
-         | assignment_satement SEMI;  // end with semicolon
+         |  assignment_satement SEMI
+         |  block_statement;  // end with semicolon
 
 // ------- assignment -------------
 
@@ -222,7 +223,7 @@ INTEGER_LIT: [0-9]+;
 STRING_LIT: '"' STR_CHAR* '"'
 	{
 		y = str(self.text)
-		self.text = y[1:-1]
+		self.text = y
 	}
 	;
 

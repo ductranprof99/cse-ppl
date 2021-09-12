@@ -1,0 +1,8 @@
+
+        class A {
+            int get() {
+                this.nothing_to_return();   /* call method */
+                return {12, 4} * "ad" + 14 ---- 12 + !!!!!!!!!!!!(!!3) % arr["b"];
+            }
+        }
+        

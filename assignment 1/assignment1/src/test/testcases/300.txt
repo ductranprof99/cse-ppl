@@ -1,11 +1,11 @@
-class Example1 {
-                    int factorial(int n){ {}
-                    int y = 20;
-                    if n == 0 then return 1; else return n * this.factorial(n - 1);
-                    }
-                    void main(){
-                    int x;
-                    x := io.readInt();
-                    io.writeIntLn(this.factorial(x));
-                    }
-                    }
+
+        class main extends Main {
+            static int count = 0;
+
+            void method(){
+                var := new Cat().name;
+                for i:= 0 to arr[2] do
+                    in := (sys.in(sys.in(in)))[123];
+            }
+        }
+        

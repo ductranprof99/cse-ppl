@@ -1,0 +1,16 @@
+
+        class Calculation{
+            int cal(){
+                int[10] arr = {0.};
+                for i := 0 to y do
+                {
+                    {
+                        # just a comment
+                        kk := 123;
+                        123 := kk;
+                    }
+                    io.writeln(i);
+                }
+            }
+        }
+        

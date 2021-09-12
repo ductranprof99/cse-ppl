@@ -1,0 +1,12 @@
+
+        class complex extends simple {
+            void nothing_to_return(){
+                sys.print_some_thing();    
+            }
+
+            int main(){
+                this.nothing_to_return();   /* call method */
+                return x + 2*y;
+            }
+        }
+        

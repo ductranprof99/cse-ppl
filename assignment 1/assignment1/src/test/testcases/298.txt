@@ -1,0 +1,11 @@
+
+        class Main extends ABC{
+            static int i = x[true] + 5;
+            int[true] arr = {"Qua Deo Ngang", "Ba Huyen Thanh Quan"};
+
+            static float main(string args){
+                sys.param_x() := 1234 || False + 22222;
+                return sys.param_x;
+            }
+        }
+        

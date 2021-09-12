@@ -1,0 +1,16 @@
+
+        class a{
+            int get() {
+                cfefer := ferb[35 - foo(2)];
+                return k.y();
+            }
+            int get() {
+
+                return kfer.y();
+            }
+            int get() {
+                ferfec := b[35 - foo(2)];
+                return tgrk.rfey();
+            }
+        }
+        

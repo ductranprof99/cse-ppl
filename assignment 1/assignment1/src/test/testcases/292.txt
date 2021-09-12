@@ -1,0 +1,9 @@
+
+        class Main extends ABC{
+            float a = ----1234 || +++++++False + -+-+ 22222;
+
+            void main(){
+                b := {{{{}}}, {123}};
+            }
+        }
+        

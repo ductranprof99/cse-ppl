@@ -1,0 +1,12 @@
+
+        class A {
+            Ab[5] n = this.hocLai(x.foo(5)[4]*(!m) + (s >= m || m+-n));
+            H[5] hocPhi(A a,b,c; H n){
+                int m = h;
+                int b, h = 40, k, d = {3,true,false,5.e5,5.8e+12};
+                a := 4;
+                s.shape();
+                float c;
+            }
+        }
+        

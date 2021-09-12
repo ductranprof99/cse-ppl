@@ -1,0 +1,8 @@
+
+        class sgrsdrfgsdfgsdfgsgsdfgsfg {
+            final string a;
+            dfasdfasdf(){
+                this.b=nil;
+            }
+        };
+        

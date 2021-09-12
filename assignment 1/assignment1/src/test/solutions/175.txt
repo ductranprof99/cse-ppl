@@ -1,1 +1,1 @@
-Ligal\\ ,<EOF>
+"Ligal\\ ",<EOF>

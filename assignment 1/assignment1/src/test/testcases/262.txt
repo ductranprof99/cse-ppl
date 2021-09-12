@@ -1,0 +1,5 @@
+class QuotientRemainder {
+                       static void main(string[2] args) {
+                            5+5 := y;
+                        }
+                    }

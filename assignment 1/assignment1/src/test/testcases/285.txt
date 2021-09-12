@@ -1,0 +1,11 @@
+
+        class Luxubu {
+            static int main = "main";
+            void main(){
+                if sys.flag then
+                    this.foo(n, n*m);
+                else
+                    /*/*/* pass */
+            }
+        }
+        

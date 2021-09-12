@@ -95,20 +95,21 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(input, expect, 127))
 
     def test_stringlit(self):
-        self.assertTrue(TestLexer.test("\"abc\"", "abc,<EOF>", 128))
+        self.assertTrue(TestLexer.test("\"abc\"", """"abc",<EOF>""", 128))
 
     def test_stringlit1(self):
         input = "\" \\naaa\\t\""
-        expect = " \\naaa\\t,<EOF>"
+        expect = """" \\naaa\\t",<EOF>"""
         self.assertTrue(TestLexer.test(input, expect, 129))
 
     def test_130(self):
         self.assertTrue(TestLexer.test("\"", "Unclosed String: ", 130))
 
     def test_31(self):
+        input = """"He asked me: \\"Where is John?\\"" """
+        expect = """"He asked me: \\"Where is John?\\"",<EOF>"""
         self.assertTrue(
-            TestLexer.test(""""He asked me: \\"Where is John?\\"" """, """He asked me: \\"Where is John?\\",<EOF>""",
-                           131))
+            TestLexer.test(input, expect, 131))
 
     def test_32(self):
         self.assertTrue(TestLexer.test("\"He asked me: ", "Unclosed String: He asked me: ", 132))
@@ -161,7 +162,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(input, expect, 141))
 
     def test_42(self):
-        self.assertTrue(TestLexer.test(""" "This contains a tab\t" """, "This contains a tab\t,<EOF>", 142))
+        self.assertTrue(TestLexer.test(""" "This contains a tab\t" """, """"This contains a tab\t",<EOF>""", 142))
 
     def test_43(self):
         self.assertTrue(TestLexer.test("int[5] a", "int,[,5,],a,<EOF>", 143))
@@ -183,12 +184,12 @@ class LexerSuite(unittest.TestCase):
 
     def test_46(self):
         input = """a= \"He said: \" Im Super'Man\" s \" testtt \" \"; __world = 5; imple = 8;"""
-        expect = "a,=,He said: ,Im,Super,Error Token '"
+        expect = """a,=,"He said: ",Im,Super,Error Token '"""
         self.assertTrue(TestLexer.test(input, expect, 146))
 
     def test_47(self):
         input = """a= \"He said: \" Hello \" \n \";"""
-        expect = "a,=,He said: ,Hello,Unclosed String:  "
+        expect = """a,=,"He said: ",Hello,Unclosed String:  """
         self.assertTrue(TestLexer.test(input, expect, 147))
 
     def test_48(self):
@@ -263,7 +264,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("for x:=1 to 2 do writeln(x);", "for,x,:=,1,to,2,do,writeln,(,x,),;,<EOF>", 166))
 
     def test_67(self):
-        self.assertTrue(TestLexer.test("\"        \"", "        ,<EOF>", 167))
+        self.assertTrue(TestLexer.test("\"        \"", """"        ",<EOF>""", 167))
 
     def test_68(self):
         self.assertTrue(
@@ -283,13 +284,13 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("a `= b", "a,Error Token `", 172))
 
     def test_73(self):
-        self.assertTrue(TestLexer.test(""" "1"  abc "2" """, "1,abc,2,<EOF>", 173))
+        self.assertTrue(TestLexer.test(""" "1"  abc "2" """, """"1",abc,"2",<EOF>""", 173))
 
     def test_74(self):
-        self.assertTrue(TestLexer.test(""" "Ligal\\f" """, """Ligal\\f,<EOF>""", 174))
+        self.assertTrue(TestLexer.test(""" "Ligal\\f" """, """"Ligal\\f",<EOF>""", 174))
 
     def test_75(self):
-        self.assertTrue(TestLexer.test(""" "Ligal\\\ " """, """Ligal\\\ ,<EOF>""", 175))
+        self.assertTrue(TestLexer.test(""" "Ligal\\\ " """, """"Ligal\\\ ",<EOF>""", 175))
 
     def test_76(self):
         self.assertTrue(TestLexer.test(""" "jasonmamoa \\k """, """Illegal Escape In String: jasonmamoa \\k""", 176))
@@ -416,23 +417,9 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(""" "Illegal \\k" """, """Illegal Escape In String: Illegal \\k""", 198))
 
     def test_99(self):
-        self.assertTrue(TestLexer.test(""" "Ok I am fine ~" """, """Ok I am fine ~,<EOF>""", 199))
+        self.assertTrue(TestLexer.test(""" "Ok I am fine ~" """, """"Ok I am fine ~",<EOF>""", 199))
 
     def test_100(self):
         self.assertTrue(TestLexer.test(""" "asdfasdfasdf\r " """, "Unclosed String: asdfasdfasdf", 200))
 
-        """ class Example2 extends ABC {
-float length,width;
-a[3+x.foo(2)] := a[b[2]] +3;
-float getArea() {}
-Shape(float length,width){
-this.length := length;
-this.width := width;
-}
-void main(){
-s := new Rectangle(3,4);
-io.writeFloatLn(s.getArea());
-s := new Triangle(3,4);
-io.writeFloatLn(s.getArea());
-}
-} """
+

@@ -1,0 +1,5 @@
+class A {
+            int dasdfasdf() {
+                a[4 + subboi.foo(2)] := ((((((1||2||3))))));
+            }
+        }

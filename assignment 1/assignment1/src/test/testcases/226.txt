@@ -1,0 +1,14 @@
+
+        class Example2 extends ABC {
+            void main(){
+                if flag then
+                    for x := ((((0||1)))) to something_big do
+                    for x := ((((0||1)))) to something_big do
+                        for x := ((((0||1)))) to something_big do
+                            for x := ((((0||1)))) to something_big do
+                                a:=1;
+                else
+                    io.writeStrLn ("Expression is false");
+            }
+        } 
+        

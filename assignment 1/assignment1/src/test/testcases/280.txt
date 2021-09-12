@@ -1,0 +1,8 @@
+
+        class complex extends simple {
+            boolean Final = "string \"", y = 1e9;
+            void nothing_to_return(){
+                sys.print_some_thing();    
+            }
+        }
+        

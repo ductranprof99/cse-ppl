@@ -1,0 +1,7 @@
+class QuotientRemainder {
+                        static void main(string[2] args) {
+
+                            System.out.println("Quotient = " + quotient);
+                            System.out.println("Remainder = " + remainder);
+                        }
+                    }

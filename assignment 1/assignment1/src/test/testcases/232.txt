@@ -1,0 +1,11 @@
+
+        class Example2 extends ABC {
+            Ab[5] n = this.hocLai(x.foo(5)[4]*(!m) + (s >= m || m+-n));
+            void main(){
+            int m = h;
+            float c;
+            a := 4;
+            s.shape();
+            }
+        } 
+        

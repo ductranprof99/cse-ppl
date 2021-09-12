@@ -1,13 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d482720a-39b9-4923-b801-ee9c7e4331f8" name="Changes" comment="" />
+    <list default="true" id="d482720a-39b9-4923-b801-ee9c7e4331f8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../BKOOL-2021.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../../BKOOL-2021.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/bkool/parser/BKOOL.g4" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/bkool/parser/BKOOL.g4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/bkool/parser/BKOOL.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/bkool/parser/BKOOL.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/bkool/parser/BKOOLLexer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/bkool/parser/BKOOLLexer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/bkool/parser/BKOOLParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/bkool/parser/BKOOLParser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/LexerSuite.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/LexerSuite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/ParserSuite.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/ParserSuite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/128.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/128.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/129.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/129.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/131.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/131.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/142.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/142.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/146.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/146.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/147.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/147.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/167.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/167.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/173.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/173.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/174.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/174.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/175.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/175.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/199.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/199.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/216.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/216.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/217.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/217.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/245.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/245.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/299.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/299.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/solutions/300.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/300.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testcases/213.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/213.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testcases/214.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/214.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testcases/215.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/215.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testcases/216.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/216.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testcases/217.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/217.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testcases/245.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/245.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testcases/299.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/299.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testcases/300.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/300.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/BKOOL.interp" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOL.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/BKOOL.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOL.tokens" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/BKOOLLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLLexer.interp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/BKOOLLexer.py" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLLexer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/BKOOLLexer.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLLexer.tokens" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/BKOOLParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLParser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/BKOOLVisitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLVisitor.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
   <component name="ProjectId" id="1xlPWScXJvojGE2CcCHRodXtXMS" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -15,6 +59,29 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="settings.editor.selected.configurable" value="editing.templates" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Python tests for ParserSuite.ParserSuite.test_211" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="assignment1" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;ParserSuite.ParserSuite.test_211&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.Python tests for ParserSuite.ParserSuite.test_211" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -26,5 +93,17 @@
       <updated>1630926735406</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

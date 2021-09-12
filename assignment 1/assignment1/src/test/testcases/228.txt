@@ -1,0 +1,12 @@
+
+        class ID {
+                        string name;
+                        ID(){
+                            this.name := nil;
+                        }
+                    };
+                    class ID{
+                        int a;
+                    }
+
+        

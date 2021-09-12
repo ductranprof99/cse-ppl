@@ -1,7 +1,2 @@
-
-            class foo {
-                H[5] function(A a,b,c; H n){
-                    (x.foo(5)[4]*(!m) + (s >= m || m+-n)).adopt := a.b.c(x.foo(5)[4]*(!m) + (s >= m || m+-n),x.foo(5)[4]*(!m) + (s >= m || m+-n)).b.c.a;
-                }
-            }
-            
+class foo { H[5] function(A a,b,c; H n){ (x.foo(5)[4]*(!m) + (s >= m || m+-n)).adopt := 
+        a.b.c(x.foo(5)[4]*(!m) + (s >= m || m+-n),x.foo(5)[4]*(!m) + (s >= m || m+-n)).b.c.a; } } 
