@@ -2,45 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d482720a-39b9-4923-b801-ee9c7e4331f8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../BKOOL-2021.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../../BKOOL-2021.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/bkool/parser/BKOOL.g4" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/bkool/parser/BKOOL.g4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/bkool/parser/BKOOL.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/bkool/parser/BKOOL.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/bkool/parser/BKOOLLexer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/bkool/parser/BKOOLLexer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/bkool/parser/BKOOLParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/bkool/parser/BKOOLParser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/LexerSuite.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/LexerSuite.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/ParserSuite.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/ParserSuite.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/128.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/128.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/129.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/129.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/131.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/131.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/142.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/142.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/146.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/146.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/147.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/147.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/167.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/167.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/173.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/173.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/174.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/174.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/175.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/175.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/199.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/199.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/216.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/216.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/217.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/217.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/245.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/245.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/299.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/299.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/solutions/300.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/solutions/300.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testcases/213.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/213.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testcases/214.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/214.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testcases/215.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/215.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testcases/216.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/216.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testcases/217.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/217.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testcases/245.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/245.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testcases/299.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/299.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testcases/300.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testcases/300.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/BKOOL.interp" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOL.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/BKOOL.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOL.tokens" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/BKOOLLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLLexer.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/BKOOLLexer.py" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLLexer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/BKOOLLexer.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLLexer.tokens" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/BKOOLParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLParser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/BKOOLVisitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/target/BKOOLVisitor.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
