@@ -4,7 +4,7 @@ from AST import *
 
 
 class ASTGeneration(BKOOLVisitor):
-
+    
     # Visit a parse tree produced by BKOOLParser#program.
     def visitProgram(self, ctx:BKOOLParser.ProgramContext):
         return Program([self.visit(i) for i in ctx.class_declare()])
@@ -13,13 +13,8 @@ class ASTGeneration(BKOOLVisitor):
     # Visit a parse tree produced by BKOOLParser#class_declare.
     def visitClass_declare(self, ctx:BKOOLParser.Class_declareContext):
         class_name = Id(ctx.ID(0).getText())
-        mem_list = []
-        for i in ctx.members():
-            each_member = self.visit(i)
-            if each_member is list:
-               mem_list += each_member
-            else: mem_list.append(each_member)
-
+        from functools import reduce
+        mem_list = reduce(lambda acc,ele:acc + self.visit(ele),ctx.members(),[])
         if ctx.EXTENDS():
             parent_name = Id(ctx.ID(1).getText())
             return ClassDecl(class_name,mem_list,parent_name)
@@ -61,12 +56,12 @@ class ASTGeneration(BKOOLVisitor):
         list_param = self.visit(ctx.list_params())
         block_stmt = self.visit(ctx.block_statement())
         if ctx.STATIC():
-            return MethodDecl(Static(),Id(ctx.ID().getText()),list_param,return_type,block_stmt)
-        MethodDecl(Instance(), Id(ctx.ID().getText()), list_param, return_type, block_stmt)
+            return [MethodDecl(Static(),Id(ctx.ID().getText()),list_param,return_type,block_stmt)]
+        return [MethodDecl(Instance(), Id(ctx.ID().getText()), list_param, return_type, block_stmt)]
 
     # Visit a parse tree produced by BKOOLParser#constructor_declare.
     def visitConstructor_declare(self, ctx:BKOOLParser.Constructor_declareContext):
-        return MethodDecl(Instance(),Id("<init>"),self.visit(ctx.list_params()),VoidType(),self.visit(ctx.block_statement()))
+        return [MethodDecl(Instance(),Id("<init>"),self.visit(ctx.list_params()),VoidType(),self.visit(ctx.block_statement()))]
 
 
     # Visit a parse tree produced by BKOOLParser#var_declare.
@@ -138,7 +133,7 @@ class ASTGeneration(BKOOLVisitor):
 
     # Visit a parse tree produced by BKOOLParser#block_statement.
     def visitBlock_statement(self, ctx:BKOOLParser.Block_statementContext):
-        return Block([self.visit(i) for i in ctx.local_attribute()],[self.visit(ctx.statement())])
+        return Block([self.visit(i) for i in ctx.local_attribute()],[self.visit(i) for i in ctx.statement()])
 
 
     # Visit a parse tree produced by BKOOLParser#local_attribute.

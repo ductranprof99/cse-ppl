@@ -1,4 +1,6 @@
 class main {
-            a:integer;
-            b:integer;
+            final int a = 3;
+
+            main(){}
+            main(){}
         }
