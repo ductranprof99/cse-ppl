@@ -13,7 +13,13 @@ class ASTGeneration(BKOOLVisitor):
     # Visit a parse tree produced by BKOOLParser#class_declare.
     def visitClass_declare(self, ctx:BKOOLParser.Class_declareContext):
         class_name = Id(ctx.ID(0).getText())
-        mem_list = [self.visit(i) for i in ctx.members()]
+        mem_list = []
+        for i in ctx.members():
+            each_member = self.visit(i)
+            if each_member is list:
+               mem_list += each_member
+            else: mem_list.append(each_member)
+
         if ctx.EXTENDS():
             parent_name = Id(ctx.ID(1).getText())
             return ClassDecl(class_name,mem_list,parent_name)
@@ -22,7 +28,8 @@ class ASTGeneration(BKOOLVisitor):
 
     # Visit a parse tree produced by BKOOLParser#members.
     def visitMembers(self, ctx:BKOOLParser.MembersContext):
-        return self.visit(ctx.getChild(0))
+        a = self.visit(ctx.getChild(0))
+        return a
 
 
     # Visit a parse tree produced by BKOOLParser#attribute_declare.

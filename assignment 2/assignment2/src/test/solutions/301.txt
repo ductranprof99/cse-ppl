@@ -1,0 +1,1 @@
+Program([ClassDecl(Id(main),[[AttributeDecl(kind=<AST.Static object at 0x000001BFF4D8C2E0>, decl=ConstDecl(constant=Id(name='a'), constType=<AST.IntType object at 0x000001BFF4D8AD00>, value=IntLiteral(value='3')))]])])
