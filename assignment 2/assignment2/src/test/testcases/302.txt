@@ -1,4 +1,3 @@
-class main {
-            a:integer;
-            b:integer;
-        }
+class Exam {
+                                final int a = new A(1,a,"Khoa");
+                            }

@@ -1,1 +1,1 @@
-Program([ClassDecl(Id(main),[AttributeDecl(Instance,VarDecl(Id(a),IntType)),AttributeDecl(Instance,VarDecl(Id(b),IntType))])])
+Program([ClassDecl(Id(Exam),[[AttributeDecl(kind=<AST.Instance object at 0x00000209B2339160>, decl=ConstDecl(constant=Id(name='a'), constType=<AST.IntType object at 0x00000209B2339B20>, value=NewExpr(classname=Id(name='A'), param=[IntLiteral(value='1'), Id(name='a'), StringLiteral(value='"Khoa"')])))]])])
