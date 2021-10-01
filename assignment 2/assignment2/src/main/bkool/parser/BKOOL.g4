@@ -22,7 +22,7 @@ attribute_declare: mutable_declare | immutable_declare;
 
 mutable_declare: (STATIC|) type_attribute var_declare ( COMMA var_declare )* SEMI;
 
-immutable_declare: (FINAL | STATIC FINAL | FINAL STATIC) type_attribute var_declare_immu ( COMMA var_declare_immu )* SEMI;
+immutable_declare: (FINAL | STATIC FINAL | FINAL STATIC) type_attribute var_declare ( COMMA var_declare )* SEMI;
 
 
 method_declare: STATIC ? return_type ID ROUND_OPEN list_params ROUND_CLOSE block_statement;
@@ -30,9 +30,6 @@ method_declare: STATIC ? return_type ID ROUND_OPEN list_params ROUND_CLOSE block
 constructor_declare: ID ROUND_OPEN list_params ROUND_CLOSE  block_statement;
 
 var_declare: ID ( ASSIGN exp) ? ;
-
-var_declare_immu: ID  ASSIGN exp;
-
 
 
 
@@ -70,7 +67,7 @@ primitive_type: INTEGER | FLOAT | BOOLEAN | STRING | VOID ;
 block_statement: CURLY_OPEN (local_attribute*) (statement*) CURLY_CLOSE;
 
 local_attribute: type_attribute var_declare ( COMMA var_declare )* SEMI
-               | FINAL type_attribute var_declare_immu ( COMMA var_declare_immu )* SEMI;
+               | FINAL type_attribute var_declare ( COMMA var_declare )* SEMI;
 
 //------------------------------------------------
 

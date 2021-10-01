@@ -44,7 +44,7 @@ class ASTGeneration(BKOOLVisitor):
     # Visit a parse tree produced by BKOOLParser#immutable_declare.
     def visitImmutable_declare(self, ctx:BKOOLParser.Immutable_declareContext):
         type_attribute = self.visit(ctx.type_attribute())
-        list_var = [self.visit(i) for i in ctx.var_declare_immu()]
+        list_var = [self.visit(i) for i in ctx.var_declare()]
         if ctx.STATIC():
             return [AttributeDecl(Static(),ConstDecl(i[0], type_attribute, i[1])) for i in list_var]
         return [AttributeDecl(Instance(),ConstDecl(i[0], type_attribute, i[1])) for i in list_var]
@@ -61,7 +61,7 @@ class ASTGeneration(BKOOLVisitor):
 
     # Visit a parse tree produced by BKOOLParser#constructor_declare.
     def visitConstructor_declare(self, ctx:BKOOLParser.Constructor_declareContext):
-        return [MethodDecl(Instance(),Id("<init>"),self.visit(ctx.list_params()),VoidType(),self.visit(ctx.block_statement()))]
+        return [MethodDecl(Instance(),Id("<init>"),self.visit(ctx.list_params()),None,self.visit(ctx.block_statement()))]
 
 
     # Visit a parse tree produced by BKOOLParser#var_declare.
@@ -69,11 +69,6 @@ class ASTGeneration(BKOOLVisitor):
         if ctx.exp():
             return Id(ctx.ID().getText()), self.visit(ctx.exp())
         return Id(ctx.ID().getText()), None
-
-
-    # Visit a parse tree produced by BKOOLParser#var_declare_immu.
-    def visitVar_declare_immu(self, ctx:BKOOLParser.Var_declare_immuContext):
-        return Id(ctx.ID().getText()), self.visit(ctx.exp())
 
 
     # Visit a parse tree produced by BKOOLParser#list_params.
@@ -89,7 +84,7 @@ class ASTGeneration(BKOOLVisitor):
     # Visit a parse tree produced by BKOOLParser#parameter.
     def visitParameter(self, ctx:BKOOLParser.ParameterContext):
         type_of_params = self.visit(ctx.parameter_type())
-        return [VarDecl(i.getText(),type_of_params) for i in ctx.ID()]
+        return [VarDecl(Id(i.getText()),type_of_params) for i in ctx.ID()]
 
 
     # Visit a parse tree produced by BKOOLParser#parameter_type.
@@ -115,7 +110,7 @@ class ASTGeneration(BKOOLVisitor):
 
     # Visit a parse tree produced by BKOOLParser#class_type.
     def visitClass_type(self, ctx:BKOOLParser.Class_typeContext):
-        return Id(ctx.ID().getText())
+        return ClassType(Id(ctx.ID().getText()))
 
 
     # Visit a parse tree produced by BKOOLParser#primitive_type.
@@ -141,7 +136,7 @@ class ASTGeneration(BKOOLVisitor):
         type_of_var = self.visit(ctx.type_attribute())
         # visit list of var declare immu/not immu should return list of tuple of (id, value)
         if ctx.FINAL():
-            list_var = [self.visit(i) for i in ctx.var_declare_immu()]
+            list_var = [self.visit(i) for i in ctx.var_declare()]
             return [ConstDecl(i[0],type_of_var,i[1]) for i in list_var]
         list_var = [self.visit(i) for i in ctx.var_declare()]
         return [VarDecl(i[0], type_of_var, i[1]) for i in list_var]
