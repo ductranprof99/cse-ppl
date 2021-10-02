@@ -1,1 +1,10 @@
-int main() {foo();}
+
+        class main{
+            int doo(){
+                if a.len() != b.len() then 
+                    sys.raise(error);
+                for i := a.len() downto 0 do
+                    sum := sum + (a[i] - b[i]) * (a[i] - b[i]);
+            }
+        }
+        

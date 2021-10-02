@@ -118,13 +118,13 @@ exp: exp (LT | GT | LTE | GTE ) exp | exp1;
 
 exp1: exp1 (EQ | NEQ) exp1 | exp2;
 
-exp2: exp3 (AND | OR) exp2 | exp3;
+exp2: exp2 (AND | OR) exp3 | exp3;
 
-exp3: exp4 (ADD | SUB) exp3 | exp4;
+exp3: exp3 (ADD | SUB) exp4 | exp4;
 
-exp4: exp5 ( MUL | FLOAT_DIV | INT_DIV | MOD ) exp4 | exp5;
+exp4: exp4 ( MUL | FLOAT_DIV | INT_DIV | MOD ) exp5 | exp5;
 
-exp5: exp6 CONCAT exp5 | exp6;
+exp5: exp5 CONCAT exp6 | exp6;
 
 exp6: NOT exp6 | exp7;
 

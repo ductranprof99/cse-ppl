@@ -13,7 +13,9 @@ class ASTGeneration(BKOOLVisitor):
     # Visit a parse tree produced by BKOOLParser#class_declare.
     def visitClass_declare(self, ctx:BKOOLParser.Class_declareContext):
         class_name = Id(ctx.ID(0).getText())
-        mem_list = reduce(lambda acc,ele:acc + self.visit(ele),ctx.members(),[])
+        mem_list = []
+        if(ctx.members().__len__()> 0):
+            mem_list = reduce(lambda acc,ele:acc + self.visit(ele),ctx.members(),[])
         if ctx.EXTENDS():
             parent_name = Id(ctx.ID(1).getText())
             return ClassDecl(class_name,mem_list,parent_name)
@@ -22,6 +24,7 @@ class ASTGeneration(BKOOLVisitor):
 
     # Visit a parse tree produced by BKOOLParser#members.
     def visitMembers(self, ctx:BKOOLParser.MembersContext):
+        if ctx.getChildCount() == 0: return
         a = self.visit(ctx.getChild(0))
         return a
 
@@ -127,8 +130,10 @@ class ASTGeneration(BKOOLVisitor):
 
     # Visit a parse tree produced by BKOOLParser#block_statement.
     def visitBlock_statement(self, ctx:BKOOLParser.Block_statementContext):
-        local_att = reduce(lambda acc,ele: acc + self.visit(ele),ctx.local_attribute(),[])
-        return Block(local_att,[self.visit(i) for i in ctx.statement()])
+        if len(ctx.local_attribute()) > 0:
+            local_att = reduce(lambda acc,ele: acc + self.visit(ele),ctx.local_attribute(),[])
+            return Block(local_att,[self.visit(i) for i in ctx.statement()])
+        return Block([],[self.visit(i) for i in ctx.statement()])
 
 
     # Visit a parse tree produced by BKOOLParser#local_attribute.
@@ -277,34 +282,34 @@ class ASTGeneration(BKOOLVisitor):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.exp3())
         if ctx.AND():
-            return BinaryOp(ctx.AND().getText(), self.visit(ctx.exp3()), self.visit(ctx.exp2()))
-        return BinaryOp(ctx.OR().getText(), self.visit(ctx.exp3()), self.visit(ctx.exp2()))
+            return BinaryOp(ctx.AND().getText(), self.visit(ctx.exp2()), self.visit(ctx.exp3()))
+        return BinaryOp(ctx.OR().getText(), self.visit(ctx.exp2()), self.visit(ctx.exp3()))
 
     # Visit a parse tree produced by BKOOLParser#exp1.
     def visitExp3(self, ctx:BKOOLParser.Exp3Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.exp4())
         if ctx.ADD():
-            return BinaryOp(ctx.ADD().getText(), self.visit(ctx.exp4()), self.visit(ctx.exp3()))
-        return BinaryOp(ctx.SUB().getText(), self.visit(ctx.exp4()), self.visit(ctx.exp3()))
+            return BinaryOp(ctx.ADD().getText(), self.visit(ctx.exp3()), self.visit(ctx.exp4()))
+        return BinaryOp(ctx.SUB().getText(), self.visit(ctx.exp3()), self.visit(ctx.exp4()))
 
     # Visit a parse tree produced by BKOOLParser#exp2.
     def visitExp4(self, ctx:BKOOLParser.Exp4Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.exp5())
         if ctx.MUL():
-            return BinaryOp(ctx.MUL().getText(), self.visit(ctx.exp5()), self.visit(ctx.exp4()))
+            return BinaryOp(ctx.MUL().getText(), self.visit(ctx.exp4()), self.visit(ctx.exp5()))
         elif ctx.FLOAT_DIV():
-            return BinaryOp(ctx.FLOAT_DIV().getText(), self.visit(ctx.exp5()), self.visit(ctx.exp4()))
+            return BinaryOp(ctx.FLOAT_DIV().getText(), self.visit(ctx.exp4()), self.visit(ctx.exp5()))
         elif ctx.INT_DIV():
-            return BinaryOp(ctx.INT_DIV().getText(), self.visit(ctx.exp5()), self.visit(ctx.exp4()))
-        return BinaryOp(ctx.MOD().getText(), self.visit(ctx.exp5()), self.visit(ctx.exp4()))
+            return BinaryOp(ctx.INT_DIV().getText(), self.visit(ctx.exp4()), self.visit(ctx.exp5()))
+        return BinaryOp(ctx.MOD().getText(), self.visit(ctx.exp4()), self.visit(ctx.exp5()))
 
     # Visit a parse tree produced by BKOOLParser#exp2.
     def visitExp5(self, ctx:BKOOLParser.Exp5Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.exp6())
-        return BinaryOp(ctx.CONCAT().getText(), self.visit(ctx.exp6()), self.visit(ctx.exp5()))
+        return BinaryOp(ctx.CONCAT().getText(), self.visit(ctx.exp5()), self.visit(ctx.exp6()))
 
     # Visit a parse tree produced by BKOOLParser#exp2.
     def visitExp6(self, ctx:BKOOLParser.Exp6Context):
@@ -395,7 +400,7 @@ class ASTGeneration(BKOOLVisitor):
         elif ctx.FLOAT_LIT():
             return FloatLiteral(float(ctx.FLOAT_LIT().getText()))
         elif ctx.STRING_LIT():
-            return StringLiteral(ctx.STRING_LIT().getText()[1:-1])
+            return StringLiteral(ctx.STRING_LIT().getText())
         elif ctx.THIS():
             return SelfLiteral()
         elif ctx.NIL():
