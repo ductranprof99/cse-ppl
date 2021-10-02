@@ -88,6 +88,7 @@ lhs: ID | operands index_represent | prefix_attribute_invo DOT ID ;
 
 prefix_attribute_invo: | ID
                        | prefix_attribute_invo DOT ID list_args_wrapped
+                       | prefix_attribute_invo DOT ID
                        | ROUND_OPEN exp ROUND_CLOSE
                        | prefix_attribute_invo index_represent
                        | THIS

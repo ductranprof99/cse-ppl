@@ -175,6 +175,8 @@ class ASTGeneration(BKOOLVisitor):
             return self.visit(ctx.exp())
         if ctx.getChildCount() == 2:
             return ArrayCell(self.visit(ctx.prefix_attribute_invo()),self.visit(ctx.index_represent()))
+        if ctx.getChildCount() == 3:
+            return FieldAccess(obj=self.visit(ctx.prefix_attribute_invo()),fieldname=Id(ctx.ID().getText()))
         obj_invo = self.visit(ctx.prefix_attribute_invo())
         method = Id(ctx.ID().getText())
         return CallExpr(obj=obj_invo,method=method,param=self.visit(ctx.list_args_wrapped()))
