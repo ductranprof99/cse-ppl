@@ -1,7 +1,7 @@
 from BKOOLVisitor import BKOOLVisitor
 from BKOOLParser import BKOOLParser
 from AST import *
-
+from functools import reduce
 
 class ASTGeneration(BKOOLVisitor):
     
@@ -13,7 +13,6 @@ class ASTGeneration(BKOOLVisitor):
     # Visit a parse tree produced by BKOOLParser#class_declare.
     def visitClass_declare(self, ctx:BKOOLParser.Class_declareContext):
         class_name = Id(ctx.ID(0).getText())
-        from functools import reduce
         mem_list = reduce(lambda acc,ele:acc + self.visit(ele),ctx.members(),[])
         if ctx.EXTENDS():
             parent_name = Id(ctx.ID(1).getText())
@@ -128,7 +127,8 @@ class ASTGeneration(BKOOLVisitor):
 
     # Visit a parse tree produced by BKOOLParser#block_statement.
     def visitBlock_statement(self, ctx:BKOOLParser.Block_statementContext):
-        return Block([self.visit(i) for i in ctx.local_attribute()],[self.visit(i) for i in ctx.statement()])
+        local_att = reduce(lambda acc,ele: acc + self.visit(ele),ctx.local_attribute(),[])
+        return Block(local_att,[self.visit(i) for i in ctx.statement()])
 
 
     # Visit a parse tree produced by BKOOLParser#local_attribute.
@@ -260,8 +260,8 @@ class ASTGeneration(BKOOLVisitor):
         elif ctx.GT():
             return BinaryOp(ctx.GT().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
         elif ctx.LTE():
-            return BinaryOp(ctx.GT().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
-        return BinaryOp(ctx.GT().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
+            return BinaryOp(ctx.LTE().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
+        return BinaryOp(ctx.GTE().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
 
     # Visit a parse tree produced by BKOOLParser#exp1.
     def visitExp1(self, ctx: BKOOLParser.Exp1Context):
@@ -391,11 +391,11 @@ class ASTGeneration(BKOOLVisitor):
     # Visit a parse tree produced by BKOOLParser#literal_replica.
     def visitLiteral_replica(self, ctx:BKOOLParser.Literal_replicaContext):
         if ctx.INTEGER_LIT():
-            return IntLiteral(ctx.INTEGER_LIT().getText())
+            return IntLiteral(int(ctx.INTEGER_LIT().getText()))
         elif ctx.FLOAT_LIT():
-            return FloatLiteral(ctx.FLOAT_LIT().getText())
+            return FloatLiteral(float(ctx.FLOAT_LIT().getText()))
         elif ctx.STRING_LIT():
-            return StringLiteral(ctx.STRING_LIT().getText())
+            return StringLiteral(ctx.STRING_LIT().getText()[1:-1])
         elif ctx.THIS():
             return SelfLiteral()
         elif ctx.NIL():

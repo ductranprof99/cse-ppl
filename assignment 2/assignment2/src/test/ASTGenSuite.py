@@ -64,12 +64,140 @@ class ASTGenSuite(unittest.TestCase):
         }
         """
         expect = str(Program([ClassDecl(Id('S'),[AttributeDecl(kind=Instance(),decl=VarDecl(variable=Id('a'),varType=ArrayType(size=5,eleType=IntType()),varInit=ArrayLiteral(value=[IntLiteral(value=1),IntLiteral(value=2),IntLiteral(value=3)])))])]))
-        print(expect)
         self.assertTrue(TestAST.test(input,expect,305))
 
     def test6(self):
         input = """
-        
+        class Rectangle extends Node {
+                void name(){
+                    (a.b[t0]).yt := 1;
+                }
+            }
         """
-        expect = str()
+        expect = str(Program([ClassDecl(classname=Id("Rectangle"),parentname=Id('Node'),memlist=[MethodDecl(name=Id('name'),kind=Instance(),param=[],returnType=VoidType(),body=Block(decl=[],stmt=[Assign(FieldAccess(ArrayCell(FieldAccess(Id("a"),Id("b")),Id("t0")),Id("yt")),IntLiteral(1))]))])]))
         self.assertTrue(TestAST.test(input,expect,306))
+
+    def test7(self):
+        input = """
+            class Rectangle extends Shape {
+                float getArea(){
+                    ID.total[0] := ID.total[0] +1;
+                }
+            }
+
+        """
+        expect = str(Program(
+        [
+            ClassDecl(
+                Id("Rectangle"),
+                [
+                MethodDecl(
+                    Instance(),
+                    Id("getArea"),
+                    [],
+                    FloatType(),
+                    Block([],
+                        [
+                            Assign(
+                                    ArrayCell(FieldAccess(Id("ID"),Id("total")),IntLiteral(0)),
+                                    BinaryOp("+",ArrayCell(FieldAccess(Id("ID"),Id("total")),IntLiteral(0)),IntLiteral(1))
+                            )
+                        ]
+                    )
+                )
+                ],
+                Id("Shape")
+            )
+        ]
+        ))
+        self.assertTrue(TestAST.test(input,expect,307))
+
+    def test8(self):
+        input = """
+            class Rectangle extends Node {
+                void name(){
+                    int[3] a;
+                    a[1 + x.foo(2)] := a[a[1 + 1]];
+                }
+            }
+        """
+        expect = str(Program([
+            ClassDecl(
+                Id("Rectangle"),
+                [
+                    MethodDecl(
+                        Instance(),
+                        Id("name"),
+                        [],
+                        VoidType(),
+                        Block(
+                            [
+                                VarDecl(Id("a"),ArrayType(3,IntType()))
+                            ],
+                            [
+                                Assign(
+                                    ArrayCell(Id("a"),BinaryOp("+",IntLiteral(1),CallExpr(Id("x"),Id("foo"),[IntLiteral(2)]))),
+                                    ArrayCell(Id("a"),ArrayCell(
+                                        Id("a"),
+                                        BinaryOp("+",IntLiteral(1),IntLiteral(1))
+                                    )
+                                    )
+                                )
+                            ]
+                        )
+                    )
+                ],
+                Id("Node")
+            )
+        ]))
+        self.assertTrue(TestAST.test(input,expect,308))
+
+    # def test9(self):
+    #     input = """
+    #     class Rectangle extends Node {
+    #             void name(){
+    #                 s := 1+2-(3*4)/5;
+    #             }
+    #         }
+    #     """
+    #     expect = str()
+
+    #     self.assertTrue(TestAST.test(input,expect,309))
+
+    def test10(self):
+        """
+        successful test series
+        """
+        input_text = """class Test {
+            int a = "addmaximum",b = 0001.18;
+            static void stepbrother= 1213;
+            void imstuck() {
+
+            }
+        }"""
+        expect = str(Program([ClassDecl(classname=Id('Test'),memlist=[AttributeDecl(Instance(),VarDecl(Id('a'),IntType(),StringLiteral("addmaximum"))),AttributeDecl(Instance(),VarDecl(Id('b'),IntType(),FloatLiteral(1.18))),AttributeDecl(Static(),VarDecl(Id('stepbrother'),VoidType(),IntLiteral(1213))),MethodDecl(name=Id('imstuck'),kind=Instance(),param=[],returnType=VoidType(),body=Block([],[]))])]))
+        print(expect)
+        print(expect)
+        self.assertTrue(TestAST.test(input_text, expect, 310))
+
+        
+    def test11(self):
+        input = """
+        class Rectangle extends Node {
+                void name(){
+                    if i == 0 then
+                        if a >= 0 
+                            then a:= 0;
+                        else 
+                            return 0 + x.name();
+                    else 
+                        if !true 
+                            then continue;
+                        else 
+                            if a == 1 then return this.name();
+                }
+            }
+
+        """
+        expect = str(str(Program([ClassDecl(classname=Id('Test'),memlist=[AttributeDecl(Instance(),VarDecl(Id('a'),IntType(),StringLiteral('"addmaximum"'))),AttributeDecl(Instance(),VarDecl(Id('b'),IntType(),FloatLiteral(1.18))),AttributeDecl(Static(),VarDecl(Id('stepbrother'),VoidType(),IntLiteral(1213))),MethodDecl(name=Id('imstuck'),kind=Instance(),param=[],returnType=VoidType(),body=Block([],[]))])])))
+        self.assertTrue(TestAST.test(input,expect,311))
