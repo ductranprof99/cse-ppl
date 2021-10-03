@@ -63,6 +63,8 @@ class ASTGeneration(BKOOLVisitor):
 
     # Visit a parse tree produced by BKOOLParser#constructor_declare.
     def visitConstructor_declare(self, ctx:BKOOLParser.Constructor_declareContext):
+        if ctx.STATIC():
+            return [MethodDecl(Static(),Id("<init>"),self.visit(ctx.list_params()),None,self.visit(ctx.block_statement()))]
         return [MethodDecl(Instance(),Id("<init>"),self.visit(ctx.list_params()),None,self.visit(ctx.block_statement()))]
 
 
@@ -261,22 +263,22 @@ class ASTGeneration(BKOOLVisitor):
     # Visit a parse tree produced by BKOOLParser#exp.
     def visitExp(self, ctx:BKOOLParser.ExpContext):
         if ctx.getChildCount() == 1:
-            return self.visit(ctx.exp1())
+            return self.visit(ctx.exp1(0))
         if ctx.LT():
-            return BinaryOp(ctx.LT().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
+            return BinaryOp(ctx.LT().getText(), self.visit(ctx.exp1(0)), self.visit(ctx.exp1(1)))
         elif ctx.GT():
-            return BinaryOp(ctx.GT().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
+            return BinaryOp(ctx.GT().getText(), self.visit(ctx.exp1(0)), self.visit(ctx.exp1(1)))
         elif ctx.LTE():
-            return BinaryOp(ctx.LTE().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
-        return BinaryOp(ctx.GTE().getText(), self.visit(ctx.exp(0)), self.visit(ctx.exp(1)))
+            return BinaryOp(ctx.LTE().getText(), self.visit(ctx.exp1(0)), self.visit(ctx.exp1(1)))
+        return BinaryOp(ctx.GTE().getText(), self.visit(ctx.exp1(0)), self.visit(ctx.exp1(1)))
 
     # Visit a parse tree produced by BKOOLParser#exp1.
     def visitExp1(self, ctx: BKOOLParser.Exp1Context):
         if ctx.getChildCount() == 1:
-            return self.visit(ctx.exp2())
+            return self.visit(ctx.exp2(0))
         if ctx.EQ():
-            return BinaryOp(ctx.EQ().getText(), self.visit(ctx.exp1(0)), self.visit(ctx.exp1(1)))
-        return BinaryOp(ctx.NEQ().getText(), self.visit(ctx.exp1(0)), self.visit(ctx.exp1(1)))
+            return BinaryOp(ctx.EQ().getText(), self.visit(ctx.exp2(0)), self.visit(ctx.exp2(1)))
+        return BinaryOp(ctx.NEQ().getText(), self.visit(ctx.exp2(0)), self.visit(ctx.exp2(1)))
 
 
     # Visit a parse tree produced by BKOOLParser#exp1.

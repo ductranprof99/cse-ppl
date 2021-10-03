@@ -4,7 +4,7 @@ from AST import *
 
 class ASTGenSuite(unittest.TestCase):
     def test(self):
-        input = """class main \{\}"""
+        input = """class main {}"""
         expect = str(Program([ClassDecl(Id("main"),[])]))
         self.assertTrue(TestAST.test(input,expect,300))
 
@@ -30,7 +30,7 @@ class ASTGenSuite(unittest.TestCase):
         class Exam {
                         static int a = 5, b;
                     }
-        }"""
+        """
         expect = str(Program(decl=[ClassDecl(classname=Id(name='Exam'), memlist=[AttributeDecl(kind=Static(), decl=VarDecl(variable=Id(name='a'), varType=IntType(), varInit=IntLiteral(value=5))), AttributeDecl(kind=Static(), decl=VarDecl(variable=Id(name='b'), varType=IntType(), varInit=None))], parentname=None)]))
         self.assertTrue(TestAST.test(input,expect,303))
      

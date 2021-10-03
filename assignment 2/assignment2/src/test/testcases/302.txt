@@ -1,6 +1,0 @@
-class main {
-            final int a = 3;
-
-            main(){}
-            main(){}
-        }

@@ -27,7 +27,7 @@ immutable_declare: (FINAL | STATIC FINAL | FINAL STATIC) type_attribute var_decl
 
 method_declare: STATIC ? return_type ID ROUND_OPEN list_params ROUND_CLOSE block_statement;
 
-constructor_declare: ID ROUND_OPEN list_params ROUND_CLOSE  block_statement;
+constructor_declare: STATIC? ID ROUND_OPEN list_params ROUND_CLOSE  block_statement;
 
 var_declare: ID ( ASSIGN exp) ? ;
 
@@ -115,9 +115,9 @@ int_exp: exp;
 
 return_exp: exp;
 
-exp: exp (LT | GT | LTE | GTE ) exp | exp1;
+exp: exp1 (LT | GT | LTE | GTE ) exp1 | exp1;
 
-exp1: exp1 (EQ | NEQ) exp1 | exp2;
+exp1: exp2 (EQ | NEQ) exp2 | exp2;
 
 exp2: exp2 (AND | OR) exp3 | exp3;
 
