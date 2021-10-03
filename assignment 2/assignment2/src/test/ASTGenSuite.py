@@ -1,234 +1,227 @@
-# import unittest
-# from TestUtils import TestAST
-# from AST import *
-
-# class ASTGenSuite(unittest.TestCase):
-#     def test(self):
-#         input = """class main \{\}"""
-#         expect = str(Program([ClassDecl(Id("main"),[])]))
-#         self.assertTrue(TestAST.test(input,expect,300))
-
-#     def test1(self):
-#         input = """class main {
-#             final int a = 3;
-#         }"""
-#         expect = str(Program([ClassDecl(Id("main"),[AttributeDecl(Instance(),ConstDecl(Id('a'),IntType(),IntLiteral(3)))])]))
-#         self.assertTrue(TestAST.test(input,expect,301))
-
-#     def test2(self):
-#         input = """class main {
-#             final int a = 3;
-
-#             main(){}
-#             main(){}
-#         }"""
-#         expect = str(Program([ClassDecl(Id('main'),[AttributeDecl(Instance(),ConstDecl(Id('a'),IntType(),IntLiteral(3))),MethodDecl(Instance(),Id('<init>'),[],None,Block([],[])),MethodDecl(Instance(),Id('<init>'),[],None,Block([],[]))])]))
-#         self.assertTrue(TestAST.test(input,expect,302))
-
-#     def test3(self):
-#         input = """
-#         class Exam {
-#                         static int a = 5, b;
-#                     }
-#         }"""
-#         expect = str(Program(decl=[ClassDecl(classname=Id(name='Exam'), memlist=[AttributeDecl(kind=Static(), decl=VarDecl(variable=Id(name='a'), varType=IntType(), varInit=IntLiteral(value=5))), AttributeDecl(kind=Static(), decl=VarDecl(variable=Id(name='b'), varType=IntType(), varInit=None))], parentname=None)]))
-#         self.assertTrue(TestAST.test(input,expect,303))
-     
-#     def test4(self):
-#         input = """
-#             class Shape {
-#                 float length,width;
-#                 float getArea() {
-#                 }
-#                 Shape(float length,width){
-#                     this.length := length;
-#                     this.width := width;
-#                 }
-#             }
-#                 class Rectangle extends Shape {
-#                 float getArea(){
-        
-#                 return this.length * this.width;
-#                 }
-#                 }
-
-#         """
-#         expect = """Program([ClassDecl(Id(Shape),[AttributeDecl(Instance,VarDecl(Id(length),FloatType)),AttributeDecl(Instance,VarDecl(Id(width),FloatType)),MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[])),MethodDecl(Id(<init>),Instance,[param(Id(length),FloatType),param(Id(width),FloatType)],Block([],[AssignStmt(FieldAccess(Self(),Id(length)),Id(length)),AssignStmt(FieldAccess(Self(),Id(width)),Id(width))]))]),ClassDecl(Id(Rectangle),Id(Shape),[MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[Return(BinaryOp(*,FieldAccess(Self(),Id(length)),FieldAccess(Self(),Id(width))))]))])])"""
-#         self.assertTrue(TestAST.test(input, expect, 304)) 
-
-#     def test5(self):
-#         input = """
-#         class S {
-#             int[5] a = {1,2,3};
-#         }
-#         """
-#         expect = str(Program([ClassDecl(Id('S'),[AttributeDecl(kind=Instance(),decl=VarDecl(variable=Id('a'),varType=ArrayType(size=5,eleType=IntType()),varInit=ArrayLiteral(value=[IntLiteral(value=1),IntLiteral(value=2),IntLiteral(value=3)])))])]))
-#         self.assertTrue(TestAST.test(input,expect,305))
-
-#     def test6(self):
-#         input = """
-#         class Rectangle extends Node {
-#                 void name(){
-#                     (a.b[t0]).yt := 1;
-#                 }
-#             }
-#         """
-#         expect = str(Program([ClassDecl(classname=Id("Rectangle"),parentname=Id('Node'),memlist=[MethodDecl(name=Id('name'),kind=Instance(),param=[],returnType=VoidType(),body=Block(decl=[],stmt=[Assign(FieldAccess(ArrayCell(FieldAccess(Id("a"),Id("b")),Id("t0")),Id("yt")),IntLiteral(1))]))])]))
-#         self.assertTrue(TestAST.test(input,expect,306))
-
-#     def test7(self):
-#         input = """
-#             class Rectangle extends Shape {
-#                 float getArea(){
-#                     ID.total[0] := ID.total[0] +1;
-#                 }
-#             }
-
-#         """
-#         expect = str(Program(
-#         [
-#             ClassDecl(
-#                 Id("Rectangle"),
-#                 [
-#                 MethodDecl(
-#                     Instance(),
-#                     Id("getArea"),
-#                     [],
-#                     FloatType(),
-#                     Block([],
-#                         [
-#                             Assign(
-#                                     ArrayCell(FieldAccess(Id("ID"),Id("total")),IntLiteral(0)),
-#                                     BinaryOp("+",ArrayCell(FieldAccess(Id("ID"),Id("total")),IntLiteral(0)),IntLiteral(1))
-#                             )
-#                         ]
-#                     )
-#                 )
-#                 ],
-#                 Id("Shape")
-#             )
-#         ]
-#         ))
-#         self.assertTrue(TestAST.test(input,expect,307))
-
-#     def test8(self):
-#         input = """
-#             class Rectangle extends Node {
-#                 void name(){
-#                     int[3] a;
-#                     a[1 + x.foo(2)] := a[a[1 + 1]];
-#                 }
-#             }
-#         """
-#         expect = str(Program([
-#             ClassDecl(
-#                 Id("Rectangle"),
-#                 [
-#                     MethodDecl(
-#                         Instance(),
-#                         Id("name"),
-#                         [],
-#                         VoidType(),
-#                         Block(
-#                             [
-#                                 VarDecl(Id("a"),ArrayType(3,IntType()))
-#                             ],
-#                             [
-#                                 Assign(
-#                                     ArrayCell(Id("a"),BinaryOp("+",IntLiteral(1),CallExpr(Id("x"),Id("foo"),[IntLiteral(2)]))),
-#                                     ArrayCell(Id("a"),ArrayCell(
-#                                         Id("a"),
-#                                         BinaryOp("+",IntLiteral(1),IntLiteral(1))
-#                                     )
-#                                     )
-#                                 )
-#                             ]
-#                         )
-#                     )
-#                 ],
-#                 Id("Node")
-#             )
-#         ]))
-#         self.assertTrue(TestAST.test(input,expect,308))
-
-#     # def test9(self):
-#     #     input = """
-#     #     class Rectangle extends Node {
-#     #             void name(){
-#     #                 s := 1+2-(3*4)/5;
-#     #             }
-#     #         }
-#     #     """
-#     #     expect = str()
-
-#     #     self.assertTrue(TestAST.test(input,expect,309))
-
-#     def test10(self):
-#         """
-#         successful test series
-#         """
-#         input_text = """class Test {
-#             int a = "addmaximum",b = 0001.18;
-#             static void stepbrother= 1213;
-#             void imstuck() {
-
-#             }
-#         }"""
-#         expect = str(Program([ClassDecl(classname=Id('Test'),memlist=[AttributeDecl(Instance(),VarDecl(Id('a'),IntType(),StringLiteral('"addmaximum"'))),AttributeDecl(Instance(),VarDecl(Id('b'),IntType(),FloatLiteral(1.18))),AttributeDecl(Static(),VarDecl(Id('stepbrother'),VoidType(),IntLiteral(1213))),MethodDecl(name=Id('imstuck'),kind=Instance(),param=[],returnType=VoidType(),body=Block([],[]))])]))
-#         self.assertTrue(TestAST.test(input_text, expect, 310))
-
-        
-#     def test11(self):
-#         input = """
-#         class Rectangle extends Node {
-#                 void name(){
-#                     if i == 0 then
-#                         if a >= 0 
-#                             then a:= 0;
-#                         else 
-#                             return 0 + x.name();
-#                     else 
-#                         if !true 
-#                             then continue;
-#                         else 
-#                             if a == 1 then return this.name();
-#                 }
-#             }
-
-#         """
-#         expect = """Program([ClassDecl(Id(Rectangle),Id(Node),[MethodDecl(Id(name),Instance,[],VoidType,Block([],[If(BinaryOp(==,Id(i),IntLit(0)),If(BinaryOp(>=,Id(a),IntLit(0)),AssignStmt(Id(a),IntLit(0)),Return(BinaryOp(+,IntLit(0),CallExpr(Id(x),Id(name),[])))),If(UnaryOp(!,BooleanLit(True)),Continue,If(BinaryOp(==,Id(a),IntLit(1)),Return(CallExpr(Self(),Id(name),[])))))]))])])"""
-
-#         self.assertTrue(TestAST.test(input,expect,311))
-
-#     def test12(self):
-#         input = """
-#             class Rectangle extends Node {
-#                 void name(){
-#                     for a:= new A() + 5 to d do {
-#                         if flag then
-#                             for b:= 1 to c do {}
-#                         else if a!=5 then
-#                            for b:= 2 to c do {}
-#                         else
-#                             for b:= 3 to c do {}
-#                     } 
-#                 }
-#             }
-#         """
-
-#         expect = """Program([ClassDecl(Id(Rectangle),Id(Node),[MethodDecl(Id(name),Instance,[],VoidType,Block([],[For(Id(a),BinaryOp(+,NewExpr(Id(A),[]),IntLit(5)),Id(d),True,Block([],[If(Id(flag),For(Id(b),IntLit(1),Id(c),True,Block([],[])]),If(BinaryOp(!=,Id(a),IntLit(5)),For(Id(b),IntLit(2),Id(c),True,Block([],[])]),For(Id(b),IntLit(3),Id(c),True,Block([],[])])))])])]))])])"""
-
-
-#         self.assertTrue(TestAST.test(input,expect,312))
-
-
-from main.bkool.utils.AST import ArrayCell, ArrayLiteral, AttributeDecl, BinaryOp, BooleanLiteral, CallExpr, ClassType, ConstDecl, Continue, FieldAccess, Instance, IntLiteral, IntType, MethodDecl, NullLiteral, SelfLiteral, StringLiteral, StringType, UnaryOp, VarDecl, VoidType
 import unittest
 from TestUtils import TestAST
 from AST import *
 
 class ASTGenSuite(unittest.TestCase):
-    def test301(self):
+    def test(self):
+        input = """class main \{\}"""
+        expect = str(Program([ClassDecl(Id("main"),[])]))
+        self.assertTrue(TestAST.test(input,expect,300))
+
+    def test1(self):
+        input = """class main {
+            final int a = 3;
+        }"""
+        expect = str(Program([ClassDecl(Id("main"),[AttributeDecl(Instance(),ConstDecl(Id('a'),IntType(),IntLiteral(3)))])]))
+        self.assertTrue(TestAST.test(input,expect,301))
+
+    def test2(self):
+        input = """class main {
+            final int a = 3;
+
+            main(){}
+            main(){}
+        }"""
+        expect = str(Program([ClassDecl(Id('main'),[AttributeDecl(Instance(),ConstDecl(Id('a'),IntType(),IntLiteral(3))),MethodDecl(Instance(),Id('<init>'),[],None,Block([],[])),MethodDecl(Instance(),Id('<init>'),[],None,Block([],[]))])]))
+        self.assertTrue(TestAST.test(input,expect,302))
+
+    def test3(self):
+        input = """
+        class Exam {
+                        static int a = 5, b;
+                    }
+        }"""
+        expect = str(Program(decl=[ClassDecl(classname=Id(name='Exam'), memlist=[AttributeDecl(kind=Static(), decl=VarDecl(variable=Id(name='a'), varType=IntType(), varInit=IntLiteral(value=5))), AttributeDecl(kind=Static(), decl=VarDecl(variable=Id(name='b'), varType=IntType(), varInit=None))], parentname=None)]))
+        self.assertTrue(TestAST.test(input,expect,303))
+     
+    def test4(self):
+        input = """
+            class Shape {
+                float length,width;
+                float getArea() {
+                }
+                Shape(float length,width){
+                    this.length := length;
+                    this.width := width;
+                }
+            }
+                class Rectangle extends Shape {
+                float getArea(){
+        
+                return this.length * this.width;
+                }
+                }
+
+        """
+        expect = """Program([ClassDecl(Id(Shape),[AttributeDecl(Instance,VarDecl(Id(length),FloatType)),AttributeDecl(Instance,VarDecl(Id(width),FloatType)),MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[])),MethodDecl(Id(<init>),Instance,[param(Id(length),FloatType),param(Id(width),FloatType)],Block([],[AssignStmt(FieldAccess(Self(),Id(length)),Id(length)),AssignStmt(FieldAccess(Self(),Id(width)),Id(width))]))]),ClassDecl(Id(Rectangle),Id(Shape),[MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[Return(BinaryOp(*,FieldAccess(Self(),Id(length)),FieldAccess(Self(),Id(width))))]))])])"""
+        self.assertTrue(TestAST.test(input, expect, 304)) 
+
+    def test5(self):
+        input = """
+        class S {
+            int[5] a = {1,2,3};
+        }
+        """
+        expect = str(Program([ClassDecl(Id('S'),[AttributeDecl(kind=Instance(),decl=VarDecl(variable=Id('a'),varType=ArrayType(size=5,eleType=IntType()),varInit=ArrayLiteral(value=[IntLiteral(value=1),IntLiteral(value=2),IntLiteral(value=3)])))])]))
+        self.assertTrue(TestAST.test(input,expect,305))
+
+    def test6(self):
+        input = """
+        class Rectangle extends Node {
+                void name(){
+                    (a.b[t0]).yt := 1;
+                }
+            }
+        """
+        expect = str(Program([ClassDecl(classname=Id("Rectangle"),parentname=Id('Node'),memlist=[MethodDecl(name=Id('name'),kind=Instance(),param=[],returnType=VoidType(),body=Block(decl=[],stmt=[Assign(FieldAccess(ArrayCell(FieldAccess(Id("a"),Id("b")),Id("t0")),Id("yt")),IntLiteral(1))]))])]))
+        self.assertTrue(TestAST.test(input,expect,306))
+
+    def test7(self):
+        input = """
+            class Rectangle extends Shape {
+                float getArea(){
+                    ID.total[0] := ID.total[0] +1;
+                }
+            }
+
+        """
+        expect = str(Program(
+        [
+            ClassDecl(
+                Id("Rectangle"),
+                [
+                MethodDecl(
+                    Instance(),
+                    Id("getArea"),
+                    [],
+                    FloatType(),
+                    Block([],
+                        [
+                            Assign(
+                                    ArrayCell(FieldAccess(Id("ID"),Id("total")),IntLiteral(0)),
+                                    BinaryOp("+",ArrayCell(FieldAccess(Id("ID"),Id("total")),IntLiteral(0)),IntLiteral(1))
+                            )
+                        ]
+                    )
+                )
+                ],
+                Id("Shape")
+            )
+        ]
+        ))
+        self.assertTrue(TestAST.test(input,expect,307))
+
+    def test8(self):
+        input = """
+            class Rectangle extends Node {
+                void name(){
+                    int[3] a;
+                    a[1 + x.foo(2)] := a[a[1 + 1]];
+                }
+            }
+        """
+        expect = str(Program([
+            ClassDecl(
+                Id("Rectangle"),
+                [
+                    MethodDecl(
+                        Instance(),
+                        Id("name"),
+                        [],
+                        VoidType(),
+                        Block(
+                            [
+                                VarDecl(Id("a"),ArrayType(3,IntType()))
+                            ],
+                            [
+                                Assign(
+                                    ArrayCell(Id("a"),BinaryOp("+",IntLiteral(1),CallExpr(Id("x"),Id("foo"),[IntLiteral(2)]))),
+                                    ArrayCell(Id("a"),ArrayCell(
+                                        Id("a"),
+                                        BinaryOp("+",IntLiteral(1),IntLiteral(1))
+                                    )
+                                    )
+                                )
+                            ]
+                        )
+                    )
+                ],
+                Id("Node")
+            )
+        ]))
+        self.assertTrue(TestAST.test(input,expect,308))
+
+    def test9(self):
+        input = """
+        class Rectangle extends Node {
+                void name(){
+                    s := 1+2-(3*4)/5;
+                }
+            }
+        """
+        expect = """Program([ClassDecl(Id(Rectangle),Id(Node),[MethodDecl(Id(name),Instance,[],VoidType,Block([],[AssignStmt(Id(s),BinaryOp(-,BinaryOp(+,IntLit(1),IntLit(2)),BinaryOp(/,BinaryOp(*,IntLit(3),IntLit(4)),IntLit(5))))]))])])"""
+
+        self.assertTrue(TestAST.test(input,expect,309))
+
+    def test10(self):
+        """
+        successful test series
+        """
+        input_text = """class Test {
+            int a = "addmaximum",b = 0001.18;
+            static void stepbrother= 1213;
+            void imstuck() {
+
+            }
+        }"""
+        expect = str(Program([ClassDecl(classname=Id('Test'),memlist=[AttributeDecl(Instance(),VarDecl(Id('a'),IntType(),StringLiteral('"addmaximum"'))),AttributeDecl(Instance(),VarDecl(Id('b'),IntType(),FloatLiteral(1.18))),AttributeDecl(Static(),VarDecl(Id('stepbrother'),VoidType(),IntLiteral(1213))),MethodDecl(name=Id('imstuck'),kind=Instance(),param=[],returnType=VoidType(),body=Block([],[]))])]))
+        self.assertTrue(TestAST.test(input_text, expect, 310))
+
+        
+    def test11(self):
+        input = """
+        class Rectangle extends Node {
+                void name(){
+                    if i == 0 then
+                        if a >= 0 
+                            then a:= 0;
+                        else 
+                            return 0 + x.name();
+                    else 
+                        if !true 
+                            then continue;
+                        else 
+                            if a == 1 then return this.name();
+                }
+            }
+
+        """
+        expect = """Program([ClassDecl(Id(Rectangle),Id(Node),[MethodDecl(Id(name),Instance,[],VoidType,Block([],[If(BinaryOp(==,Id(i),IntLit(0)),If(BinaryOp(>=,Id(a),IntLit(0)),AssignStmt(Id(a),IntLit(0)),Return(BinaryOp(+,IntLit(0),CallExpr(Id(x),Id(name),[])))),If(UnaryOp(!,BooleanLit(True)),Continue,If(BinaryOp(==,Id(a),IntLit(1)),Return(CallExpr(Self(),Id(name),[])))))]))])])"""
+
+        self.assertTrue(TestAST.test(input,expect,311))
+
+    def test12(self):
+        input = """
+            class Rectangle extends Node {
+                void name(){
+                    for a:= new A() + 5 to d do {
+                        if flag then
+                            for b:= 1 to c do {}
+                        else if a!=5 then
+                           for b:= 2 to c do {}
+                        else
+                            for b:= 3 to c do {}
+                    } 
+                }
+            }
+        """
+
+        expect = """Program([ClassDecl(Id(Rectangle),Id(Node),[MethodDecl(Id(name),Instance,[],VoidType,Block([],[For(Id(a),BinaryOp(+,NewExpr(Id(A),[]),IntLit(5)),Id(d),True,Block([],[If(Id(flag),For(Id(b),IntLit(1),Id(c),True,Block([],[])]),If(BinaryOp(!=,Id(a),IntLit(5)),For(Id(b),IntLit(2),Id(c),True,Block([],[])]),For(Id(b),IntLit(3),Id(c),True,Block([],[])])))])])]))])])"""
+
+
+        self.assertTrue(TestAST.test(input,expect,312))
+
+    def test313(self):
         """Simple program: class main {} """
         input = """
         class main extends Main{
@@ -236,9 +229,9 @@ class ASTGenSuite(unittest.TestCase):
         }
         """
         expect = str(Program([ClassDecl(Id("main"),[], Id("Main"))]))
-        self.assertTrue(TestAST.test(input,expect,301))
+        self.assertTrue(TestAST.test(input,expect,313))
    
-    def test302(self):
+    def test14(self):
         """Simple program: class main {} """
         input = """
         class main extends main{
@@ -246,9 +239,9 @@ class ASTGenSuite(unittest.TestCase):
         }
         """
         expect = str(Program([ClassDecl(Id("main"),[AttributeDecl(Static(),VarDecl(Id("a"),IntType(),IntLiteral(1)))], Id("main"))]))
-        self.assertTrue(TestAST.test(input,expect,302))
+        self.assertTrue(TestAST.test(input,expect,314))
 
-    def test303(self):
+    def test15(self):
         input = """
         class main{
             final static bool flag = True;
@@ -256,9 +249,9 @@ class ASTGenSuite(unittest.TestCase):
         }
         """
         expect = Program([ClassDecl(Id("main"), [AttributeDecl(Static(), ConstDecl(Id("flag"), ClassType(Id("bool")), Id("True"))), AttributeDecl(Instance(), ConstDecl(Id("f"), FloatType(), None))], None)])
-        self.assertTrue(TestAST.test(input,str(expect),303))
+        self.assertTrue(TestAST.test(input,str(expect),315))
     
-    def test304(self):
+    def test15(self):
         input = """
         class main extends ABC{
             static final boolean flag = false;
@@ -266,9 +259,9 @@ class ASTGenSuite(unittest.TestCase):
         }
         """
         expect = Program([ClassDecl(Id("main"),[AttributeDecl(Static(), ConstDecl(Id("flag"), BoolType(), BooleanLiteral(False))), AttributeDecl(Instance(), VarDecl(Id("flag1"), FloatType(), BooleanLiteral(True)))], Id("ABC"))])
-        self.assertTrue(TestAST.test(input,str(expect),304))
+        self.assertTrue(TestAST.test(input,str(expect),315))
     
-    def test305(self):
+    def test16(self):
         input = """
         class main{
             int main(){
@@ -277,9 +270,9 @@ class ASTGenSuite(unittest.TestCase):
         }
         """
         expect = Program([ClassDecl(Id("main"), [MethodDecl(Instance(), Id("main"), [], IntType(), Block([], [Return(IntLiteral(0))]))], None)])
-        self.assertTrue(TestAST.test(input,str(expect),305))
+        self.assertTrue(TestAST.test(input,str(expect),316))
     
-    def test306(self):
+    def test18(self):
         input = """
         class ___ extends __{
             bool foo(string a,b){
@@ -291,9 +284,9 @@ class ASTGenSuite(unittest.TestCase):
         """
         method_decl = MethodDecl(Instance(), Id("foo"), [VarDecl(Id("a"), StringType(), None), VarDecl(Id("b"), StringType(), None)], ClassType(Id("bool")), Block([], []))
         expect = Program([ClassDecl(Id("___"),[method_decl, AttributeDecl(Static(), VarDecl(Id("pi"), FloatType(), FloatLiteral(1e9)))], Id("__"))])
-        self.assertTrue(TestAST.test(input,str(expect),306))
+        self.assertTrue(TestAST.test(input,str(expect),318))
     
-    def test307(self):
+    def test19(self):
         input = """
         class main extends __init__{
             main(int a; float b, c){
@@ -306,9 +299,9 @@ class ASTGenSuite(unittest.TestCase):
         """
         method_decl = MethodDecl(Instance(), Id("<init>"), [VarDecl(Id("a"), IntType(), None), VarDecl(Id("b"), FloatType(), None), VarDecl(Id("c"), FloatType(), None)], None, Block([], [Block([], []), Break()]))
         expect = Program([ClassDecl(Id("main"),[method_decl], Id("__init__"))])
-        self.assertTrue(TestAST.test(input,str(expect),307))
+        self.assertTrue(TestAST.test(input,str(expect),319))
     
-    def test308(self):
+    def test20(self):
         input = """
         class __init__ extends __init__{
             static int main(float a, c, _){
@@ -323,9 +316,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [Continue(), Block([], [If(Id("flag"), Return(IntLiteral(0)))])])
         method_decl = MethodDecl(Static(), Id("main"), vardecls, IntType(), block)
         expect = Program([ClassDecl(Id("__init__"),[method_decl], Id("__init__"))])
-        self.assertTrue(TestAST.test(input,str(expect),308))
+        self.assertTrue(TestAST.test(input,str(expect),320))
     
-    def test309(self):
+    def test21(self):
         input = """
         class main{
             
@@ -345,9 +338,9 @@ class ASTGenSuite(unittest.TestCase):
         a4 = AttributeDecl(Static(), VarDecl(Id("x"), StringType(), StringLiteral('"Hello\\t"')))
         a5 = AttributeDecl(Instance(), ConstDecl(Id("pi"), ClassType(Id("const")), FloatLiteral(3.14e-0)))
         expect = Program([ClassDecl(Id("main"),[], None), ClassDecl(Id("main1"),[a1, a2, a3, a4, a5], Id("main2"))])
-        self.assertTrue(TestAST.test(input,str(expect),309))
+        self.assertTrue(TestAST.test(input,str(expect),321))
     
-    def test310(self):
+    def test22(self):
         input = """
         class ABC{
             # empty class
@@ -364,9 +357,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [If(BinaryOp("<=", Id("n"), IntLiteral(1)), Return(Id("n")), Return(BinaryOp("*", Id("n"), CallExpr(SelfLiteral(), Id("factorial"), [BinaryOp("-", Id("n"), IntLiteral(1))]))))])
         method_decl = MethodDecl(Instance(), Id("factorial"), [VarDecl(Id("n"), IntType(), None)], IntType(), block)
         expect = Program([ClassDecl(Id("ABC"),[], None), ClassDecl(Id("XYZ"), [method_decl], Id("ABC"))])
-        self.assertTrue(TestAST.test(input,str(expect),310))
+        self.assertTrue(TestAST.test(input,str(expect),322))
     
-    def test311(self):
+    def test23(self):
         input = """
         class XYZ extends ABC{
             int main(){
@@ -381,9 +374,9 @@ class ASTGenSuite(unittest.TestCase):
         method_decl = MethodDecl(Instance(), Id("main"), [], IntType(), block)
         expect = Program([ClassDecl(Id("XYZ"),[method_decl], Id("ABC"))])
         
-        self.assertTrue(TestAST.test(input,str(expect),311))
+        self.assertTrue(TestAST.test(input,str(expect),323))
 
-    def test312(self):
+    def test24(self):
         """Simple program: class main {} """
         input = """
         class main {}
@@ -405,9 +398,9 @@ class ASTGenSuite(unittest.TestCase):
         a1 = AttributeDecl(Static(), VarDecl(Id("a"), ClassType(Id("Num")), NewExpr(Id("Num"), [])))
         expect = Program([ClassDecl(Id("main"), [method_decl, a1], None)])
         # print(str(expect))
-        self.assertTrue(TestAST.test(input,str(expect),313))
+        self.assertTrue(TestAST.test(input,str(expect),324))
 
-    def test314(self):
+    def test25(self):
         input = """
         class main{
             static Num a = new Num();
@@ -426,150 +419,99 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([VarDecl(Id("lst"), ArrayType(5, StringType()), ArrayLiteral([StringLiteral('"abc"'), IntLiteral(5)]))], [for_stmt])
         method_decl = MethodDecl(Instance(), Id("calc"), [], FloatType(), block)
         expect = Program([ClassDecl(Id("main"),[a1, a2, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),314))
+        self.assertTrue(TestAST.test(input,str(expect),325))
     
-    def test315(self):
+    def test26(self):
         input = """
-        class Class{
-            static boolean flag = true;
-            static boolean main(int[10] arr){
-                if arr[3 + ABC.foo(2.e-5)] <= sys.a[0] + 4 then
-                    return flag;
-                else return !flag;
-            }
-        }
-        """
-        a1 = AttributeDecl(Static(), VarDecl(Id("flag"), BoolType(), BooleanLiteral(True)))
-        if_exp = BinaryOp("<=", ArrayCell(Id("arr"), BinaryOp("+", IntLiteral(3), CallExpr(Id("ABC"), Id("foo"), [FloatLiteral(2.e-5)]))), BinaryOp("+", ArrayCell(FieldAccess(Id("sys"), Id("a")), IntLiteral(0)), IntLiteral(4)))
-        then_stmt = Return(Id("flag"))
-        else_stmt = Return(UnaryOp("!", Id("flag")))
-        block = Block([], [If(if_exp, then_stmt, else_stmt)])
-        method_decl = MethodDecl(Static(), Id("main"), [VarDecl(Id("arr"), ArrayType(10, IntType()))], BoolType(), block)
-        expect = Program([ClassDecl(Id("Class"),[a1, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),315))
-    
-    def test316(self):
-        input = """
-        class ABC extends _ABC{
-            num i = 0;
-            int call(){
-                for j := 0 to n do{
-                    if i == 0 then{
-                        final boolean k = false;
-                        return k || true && True;    
+                class Example1 {
+                    int x=5,y,z=7;float a=8*b;
+                    int factorial(int n){
+                    if n == 0 then return 1; else return n * this.factorial(n - 1);
                     }
-                    else break;
+                    void main(){
+                        int x;
+                        x := io.readInt();
+                        io.writeIntLn(this.factorial(x));
+                    }
+                }
+        """
+        expect = """Program([ClassDecl(Id(Example1),[AttributeDecl(Instance,VarDecl(Id(x),IntType,IntLit(5))),AttributeDecl(Instance,VarDecl(Id(y),IntType)),AttributeDecl(Instance,VarDecl(Id(z),IntType,IntLit(7))),AttributeDecl(Instance,VarDecl(Id(a),FloatType,BinaryOp(*,IntLit(8),Id(b)))),MethodDecl(Id(factorial),Instance,[param(Id(n),IntType)],IntType,Block([],[If(BinaryOp(==,Id(n),IntLit(0)),Return(IntLit(1)),Return(BinaryOp(*,Id(n),CallExpr(Self(),Id(factorial),[BinaryOp(-,Id(n),IntLit(1))]))))])),MethodDecl(Id(main),Instance,[],VoidType,Block([VarDecl(Id(x),IntType)],[AssignStmt(Id(x),CallExpr(Id(io),Id(readInt),[])),Call(Id(io),Id(writeIntLn),[CallExpr(Self(),Id(factorial),[Id(x)])])]))])])"""
+        self.assertTrue(TestAST.test(input, expect, 326))
+
+    def test27(self):
+        input = """
+            class Shape {
+                float length,width;
+                float getArea() {
+                }
+                Shape(float length,width){
+                    this.length := length;
+                    this.width := width;
                 }
             }
-        }
-        class DEF {
-            num i = 0;
-            int call(){
-                for j := 0 to n do{
-                    if i == 0 then{
-                        final boolean k = false;
-                        return k || true && True;    
-                    }
-                    else break;
+                class Rectangle extends Shape {
+                float getArea(){
+
+                return this.length * this.width;
+                }
+                }
+
+        """
+        expect = """Program([ClassDecl(Id(Shape),[AttributeDecl(Instance,VarDecl(Id(length),FloatType)),AttributeDecl(Instance,VarDecl(Id(width),FloatType)),MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[])),MethodDecl(Id(<init>),Instance,[param(Id(length),FloatType),param(Id(width),FloatType)],Block([],[AssignStmt(FieldAccess(Self(),Id(length)),Id(length)),AssignStmt(FieldAccess(Self(),Id(width)),Id(width))]))]),ClassDecl(Id(Rectangle),Id(Shape),[MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[Return(BinaryOp(*,FieldAccess(Self(),Id(length)),FieldAccess(Self(),Id(width))))]))])])"""
+        self.assertTrue(TestAST.test(input, expect, 327))
+
+    def test28(self):
+        input = """
+            class Triangle extends Shape {
+            float getArea(){
+            return this.length*this.width / 2;
+            }
+            }
+                class Example2 {
+                void main(){
+                 Shape s;
+                 s := new Rectangle(3,4);
+                    io.writeFloatLn(s.getArea());
+                    s := new Triangle(3,4);
+                    io.writeFloatLn(s.getArea());
                 }
             }
-        }
         """
-        a = AttributeDecl(Instance(), VarDecl(Id("i"), ClassType(Id("num")), IntLiteral(0)))
-        then_stmt = Block([ConstDecl(Id("k"), BoolType(), BooleanLiteral(False))], [Return(BinaryOp("&&", BinaryOp("||", Id("k"), BooleanLiteral(True)), Id("True")))])
-        else_stmt = Break()
-        if_stmt = If(BinaryOp("==", Id("i"), IntLiteral(0)), then_stmt, else_stmt)
-        for_stmt = For(Id("j"), IntLiteral(0), Id("n"), True, Block([], [if_stmt]))
-        block = Block([], [for_stmt])
-        method_decl = MethodDecl(Instance(), Id("call"), [], IntType(), block)
-        expect = Program([ClassDecl(Id("ABC"),[a, method_decl], Id("_ABC")), ClassDecl(Id("DEF"), [a, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),316))
-    
-    def test317(self):
-        input = """
-        class Something{
-            final boolean flag = true;
-            static obj x = nil;
-            void main(){
-                a := !!!true && flag;
-                return this.main() + sys.math.calc(2.e-5 / 0, x != rr[i + 2*j]) % 3;
-            }
-        }
-        """
-        a1 = AttributeDecl(Instance(), ConstDecl(Id("flag"), BoolType(), BooleanLiteral(True)))
-        a2 = AttributeDecl(Static(), VarDecl(Id("x"), ClassType(Id("obj")), NullLiteral()))
-        ass_stmt = Assign(Id("a"), BinaryOp("&&", UnaryOp("!", UnaryOp("!", UnaryOp("!", BooleanLiteral(True)))), Id("flag")))
-        return_stmt = Return(BinaryOp("+", CallExpr(SelfLiteral(), Id("main"), []), BinaryOp("%", CallExpr(FieldAccess(Id("sys"), Id("math")), Id("calc"), [BinaryOp("/", FloatLiteral(2.e-5), IntLiteral(0)), BinaryOp("!=", Id("x"), ArrayCell(Id("rr"), BinaryOp("+", Id("i"), BinaryOp("*", IntLiteral(2), Id("j")))))]), IntLiteral(3))))
-        block = Block([], [ass_stmt, return_stmt])
-        method_decl = MethodDecl(Instance(), Id("main"), [], VoidType(), block)
-        expect = Program([ClassDecl(Id("Something"),[a1, a2, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),317))
-    
-    def test318(self):
-        input = """
-        class class1 extends class2{
-            static final string str1 = "Ho Xuan Huong";
-            final static void var = this;
+        expect = "Program([ClassDecl(Id(Triangle),Id(Shape),[MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[Return(BinaryOp(/,BinaryOp(*,FieldAccess(Self(),Id(length)),FieldAccess(Self(),Id(width))),IntLit(2)))]))]),ClassDecl(Id(Example2),[MethodDecl(Id(main),Instance,[],VoidType,Block([VarDecl(Id(s),ClassType(Id(Shape)))],[AssignStmt(Id(s),NewExpr(Id(Rectangle),[IntLit(3),IntLit(4)])),Call(Id(io),Id(writeFloatLn),[CallExpr(Id(s),Id(getArea),[])]),AssignStmt(Id(s),NewExpr(Id(Triangle),[IntLit(3),IntLit(4)])),Call(Id(io),Id(writeFloatLn),[CallExpr(Id(s),Id(getArea),[])])]))])])"
+        self.assertTrue(TestAST.test(input, expect, 328))
 
-            static typ _() {{{/*comment*/}}}
-        }
-        class class2{
-            typ main(){
-                this._();
-                for _ := 1 % this downto -_ do
-                    continue;
-            }
-        }
-        """
-        a1 = AttributeDecl(Static(), ConstDecl(Id("str1"), StringType(), StringLiteral('"Ho Xuan Huong"')))
-        a2 = AttributeDecl(Static(), ConstDecl(Id("var"), VoidType(), SelfLiteral()))
-        method_decl1 = MethodDecl(Static(), Id("_"), [], ClassType(Id("typ")), Block([], [Block([], [Block([], [])])]))
-        for_stmt = For(Id("_"), BinaryOp("%", IntLiteral(1), SelfLiteral()), UnaryOp("-", Id("_")), False, Continue())
-        block = Block([], [CallStmt(SelfLiteral(), Id("_"), []), for_stmt])
-        method_decl2 = MethodDecl(Instance(), Id("main"), [], ClassType(Id("typ")), block)
-        expect = Program([ClassDecl(Id("class1"),[a1, a2, method_decl1], Id("class2")), ClassDecl(Id("class2"), [method_decl2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),318))
-    
-    def test319(self):
+    def test29(self):
         input = """
-        class Main{
-            int _1 = 5;
+            class Triangle extends Shape {
+                final int a;
+            }
+        """
+        expect = 'Program([ClassDecl(Id(Triangle),Id(Shape),[AttributeDecl(Instance,ConstDecl(Id(a),IntType,None))])])'
+        self.assertTrue(TestAST.test(input, expect, 329))
 
-            static void main(string[10] args){
-                Main myObj = new Main();
-                System.out.println(myObj.x.y.z);
-            }
-        }
-        """
-        a1 = AttributeDecl(Instance(), VarDecl(Id("_1"), IntType(), IntLiteral(5)))
-        block = Block([VarDecl(Id("myObj"), ClassType(Id("Main")), NewExpr(Id("Main"), []))], [CallStmt(FieldAccess(Id("System"), Id("out")), Id("println"), [FieldAccess(FieldAccess(FieldAccess(Id("myObj"), Id("x")), Id("y")), Id("z"))])])
-        method_decl = MethodDecl(Static(), Id("main"), [VarDecl(Id("args"), ArrayType(10, StringType()))], VoidType(), block)
-        expect = Program([ClassDecl(Id("Main"),[a1, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),319))
-    
-    def test320(self):
+    def test30(self):
         input = """
-        class Maxof2{
-            void main(String args){
-                int i = Integer.parseInt(args[x -+-y]);
-                int j = Integer.parseInt(args[1 != 2]);
-                if i > j then
-                    System.out().println(i ^ " is greater than " + j);
-                System.out.println(j + " is greater than " ^ i);
+            class Rectangle extends React {
+                React name(){
+                    for a:= 4.3 to ppl do {
+                        if ppl == 1 then
+                            for b:= 1 to c do {
+                                if ppl != 1 then
+                                    if ppl == 1 then
+                                        ppl := 2;
+                                    else if a != 3 then
+                                        break;
+                            }
+                    } 
+                }
             }
-        }
         """
-        v1 = VarDecl(Id("i"), IntType(), CallExpr(Id("Integer"), Id("parseInt"), [ArrayCell(Id("args"), BinaryOp("-", Id("x"), UnaryOp("+", UnaryOp("-", Id("y")))))]))
-        v2 = VarDecl(Id("j"), IntType(), CallExpr(Id("Integer"), Id("parseInt"), [ArrayCell(Id("args"), BinaryOp("!=", IntLiteral(1), IntLiteral(2)))]))
-        then_stmt = CallStmt(CallExpr(Id("System"), Id("out"), []), Id("println"), [BinaryOp("+", BinaryOp("^", Id("i"), StringLiteral('" is greater than "')), Id("j"))])
-        else_stmt = CallStmt(FieldAccess(Id("System"), Id("out")), Id("println"), [BinaryOp("+", Id("j"), BinaryOp("^", StringLiteral('" is greater than "'), Id("i")))])
-        if_stmt = If(BinaryOp(">", Id("i"), Id("j")), then_stmt, None)
-        block = Block([v1, v2], [if_stmt, else_stmt])
-        method_decl = MethodDecl(Instance(), Id("main"), [VarDecl(Id("args"), ClassType(Id("String")), None)], VoidType(), block)
-        expect = Program([ClassDecl(Id("Maxof2"),[method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),320))
+
+        expect = """Program([ClassDecl(Id(Rectangle),Id(React),[MethodDecl(Id(name),Instance,[],ClassType(Id(React)),Block([],[For(Id(a),FloatLit(4.3),Id(ppl),True,Block([],[If(BinaryOp(==,Id(ppl),IntLit(1)),For(Id(b),IntLit(1),Id(c),True,Block([],[If(BinaryOp(!=,Id(ppl),IntLit(1)),If(BinaryOp(==,Id(ppl),IntLit(1)),AssignStmt(Id(ppl),IntLit(2)),If(BinaryOp(!=,Id(a),IntLit(3)),Break)))])]))])])]))])])"""
+
+        self.assertTrue(TestAST.test(input,expect,330))
     
-    def test321(self):
+    def test31(self):
         input = """
         class people{
             string name;
@@ -600,9 +542,9 @@ class ASTGenSuite(unittest.TestCase):
         block2 = Block([], [Return(FieldAccess(SelfLiteral(), Id("age")))])
         method_decl2 = MethodDecl(Instance(), Id("getAge"), [], IntType(), block2)
         expect = Program([ClassDecl(Id("people"),[a1, a2, a3, method_decl, method_decl1, method_decl2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),321))
+        self.assertTrue(TestAST.test(input,str(expect),331))
     
-    def test322(self):
+    def test32(self):
         input = """
         class XYZ extends Basic{
             float func(){
@@ -633,9 +575,9 @@ class ASTGenSuite(unittest.TestCase):
         method_decl2 = MethodDecl(Static(), Id("foo"), [], FloatType(), block2)
         a4 = AttributeDecl(Instance(), VarDecl(Id("main"), VoidType(), NullLiteral()))
         expect = Program([ClassDecl(Id("XYZ"),[method_decl1, a1, a2, a3, method_decl2, a4], Id("Basic"))])
-        self.assertTrue(TestAST.test(input,str(expect),322))
+        self.assertTrue(TestAST.test(input,str(expect),332))
     
-    def test323(self):
+    def test33(self):
         input = """
         class main{
             void call(int x, y; boolean[5] flags){
@@ -657,9 +599,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [for_stmt])
         method_decl = MethodDecl(Instance(), Id("call"), [VarDecl(Id("x"), IntType(), None), VarDecl(Id("y"), IntType(), None), VarDecl(Id("flags"), ArrayType(5, BoolType()), None)], VoidType(), block)
         expect = Program([ClassDecl(Id("main"),[method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),323))
+        self.assertTrue(TestAST.test(input,str(expect),333))
     
-    def test324(self):
+    def test34(self):
         input = """
         class Extends extends extend{ 
             static final arr[100] a = nil;
@@ -678,9 +620,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([c1], [return_stmt])
         method_decl = MethodDecl(Instance(), Id("Nil"), [v1, v2], ClassType(Id("Nil")), block)
         expect = Program([ClassDecl(Id("Extends"),[a1, method_decl], Id("extend"))])
-        self.assertTrue(TestAST.test(input,str(expect),324))
+        self.assertTrue(TestAST.test(input,str(expect),334))
     
-    def test325(self):
+    def test35(self):
         input = """
         class Simple{
             string[5] get5String(){
@@ -713,9 +655,9 @@ class ASTGenSuite(unittest.TestCase):
         method_decl2 = MethodDecl(Instance(), Id("clone"), [], VoidType(), Block([], []))
         method_decl3 = MethodDecl(Static(), Id("callSimple"), [], StringType(), Block([], []))
         expect = Program([ClassDecl(Id("Simple"),[method_decl1, method_decl2], None), ClassDecl(Id("middleClass"),[], None), ClassDecl(Id("Complex"),[method_decl3], Id("Simple"))])
-        self.assertTrue(TestAST.test(input,str(expect),325))
+        self.assertTrue(TestAST.test(input,str(expect),335))
     
-    def test326(self):
+    def test36(self):
         input = """
         class ACS{
             float x = 2.e+2;
@@ -737,9 +679,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [if_stmt, ass_stmt])
         method_decl = MethodDecl(Instance(), Id("main"), [], IntType(), block)
         expect = Program([ClassDecl(Id("ACS"),[a1, a2, a3, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),326))
+        self.assertTrue(TestAST.test(input,str(expect),336))
 
-    def test327(self):
+    def test37(self):
         input = """
         class ACS{
             float x = 2.e+2, y = 123e-3, z;
@@ -760,9 +702,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [ass_stmt, if_stmt])
         method_decl = MethodDecl(Instance(), Id("main"), [], IntType(), block)
         expect = Program([ClassDecl(Id("ACS"),[a1, a2, a3, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),327))
+        self.assertTrue(TestAST.test(input,str(expect),337))
     
-    def test328(self):
+    def test38(self):
         input = """
         class ABC{
             # pass
@@ -824,9 +766,9 @@ class ASTGenSuite(unittest.TestCase):
         class6 = ClassDecl(Id("QRS"),[], Id("NOP"))
         class7 = ClassDecl(Id("TUV"),[], None)
         expect = Program([class1, class2, class3, class4, class5, class6, class7])
-        self.assertTrue(TestAST.test(input,str(expect),328))
+        self.assertTrue(TestAST.test(input,str(expect),338))
     
-    def test329(self):
+    def test39(self):
         input = """
         class main{
             res func(){
@@ -853,11 +795,11 @@ class ASTGenSuite(unittest.TestCase):
         a1 = AttributeDecl(Static(), VarDecl(Id("str"), StringType(), StringLiteral('"str"')))
         a2 = AttributeDecl(Static(), VarDecl(Id("str1"), StringType(), None))
         expect = Program([ClassDecl(Id("main"),[method_decl, a1, a2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),329))
+        self.assertTrue(TestAST.test(input,str(expect),339))
 
     
 
-    def test330(self):
+    def test40(self):
         input = """
         class main{
             int[0] f(string s; void v){
@@ -874,9 +816,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([v1], [if_stmt])
         method_decl = MethodDecl(Instance(), Id("f"), [VarDecl(Id("s"), StringType(), None), VarDecl(Id("v"), VoidType(), None)], ArrayType(0, IntType()), block)
         expect = Program([ClassDecl(Id("main"),[method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),330))
+        self.assertTrue(TestAST.test(input,str(expect),340))
     
-    def test331(self):
+    def test41(self):
         input = """
         class main{
             static int i;
@@ -892,9 +834,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [for_stmt])
         method_decl = MethodDecl(Instance(), Id("main"), [], ArrayType(3, FloatType()), block)
         expect = Program([ClassDecl(Id("main"),[v1, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),331))
+        self.assertTrue(TestAST.test(input,str(expect),341))
     
-    def test332(self):
+    def test42(self):
         input = """
         class main{
             static string call(int x; int y; int z){
@@ -922,9 +864,9 @@ class ASTGenSuite(unittest.TestCase):
         block2 = Block([v4, v5, v6], [call_stmt])
         method_decl2 = MethodDecl(Instance(), Id("main"), [], VoidType(), block2)
         expect = Program([ClassDecl(Id("main"),[method_decl1, method_decl2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),332))
+        self.assertTrue(TestAST.test(input,str(expect),342))
     
-    def test333(self):
+    def test43(self):
         input = """
         class main{
             boolean sort(int[10] arr; int l; int r){
@@ -951,9 +893,9 @@ class ASTGenSuite(unittest.TestCase):
         v3 = VarDecl(Id("r"), IntType(), None)
         method_decl = MethodDecl(Instance(), Id("sort"), [v1, v2, v3], BoolType(), block)
         expect = Program([ClassDecl(Id("main"),[method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),333))
+        self.assertTrue(TestAST.test(input,str(expect),343))
     
-    def test334(self):
+    def test44(self):
         input = """
         class main extends class_{
             static void convert(string str){
@@ -968,9 +910,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([v1], [ass1, Return(Id("length"))])
         method_decl = MethodDecl(Static(), Id("convert"), [VarDecl(Id("str"), StringType(), None)], VoidType(), block)
         expect = Program([ClassDecl(Id("main"),[method_decl], Id("class_"))])
-        self.assertTrue(TestAST.test(input,str(expect),334))
+        self.assertTrue(TestAST.test(input,str(expect),344))
     
-    def test335(self):
+    def test45(self):
         input = """
         class main{
             _ func(){
@@ -982,9 +924,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [return_stmt])
         method_decl = MethodDecl(Instance(), Id("func"), [], ClassType(Id("_")), block)
         expect = Program([ClassDecl(Id("main"),[method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),335))
+        self.assertTrue(TestAST.test(input,str(expect),345))
     
-    def test336(self):
+    def test46(self):
         input = """
         class main{
             _ res;
@@ -1006,9 +948,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [for_stmt, if_stmt])
         method_decl = MethodDecl(Instance(), Id("<init>"), [], None, block)
         expect = Program([ClassDecl(Id("main"),[a1, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),336))
+        self.assertTrue(TestAST.test(input,str(expect),346))
     
-    def test337(self):
+    def test47(self):
         input = """
         class Shape {
             static final int numOfShape = 0;
@@ -1025,9 +967,9 @@ class ASTGenSuite(unittest.TestCase):
         a4 = AttributeDecl(Instance(), VarDecl(Id("width"), FloatType(), None))
         method_decl = MethodDecl(Static(), Id("getNumOfShape"), [], IntType(), Block([], [Return(Id("numOfShape"))]))
         expect = Program([ClassDecl(Id("Shape"),[a1, a2, a3, a4, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),337))
+        self.assertTrue(TestAST.test(input,str(expect),347))
     
-    def test338(self):
+    def test48(self):
         input = """
         class Rectangle extends Shape {
             float getArea(int a; float b){
@@ -1038,9 +980,9 @@ class ASTGenSuite(unittest.TestCase):
         block = Block([], [Return(BinaryOp("*", FieldAccess(SelfLiteral(), Id("length")), FieldAccess(SelfLiteral(), Id("width"))))])
         method_decl = MethodDecl(Instance(), Id("getArea"), [VarDecl(Id("a"), IntType(), None), VarDecl(Id("b"), FloatType(), None)], FloatType(), block)
         expect = Program([ClassDecl(Id("Rectangle"),[method_decl], Id("Shape"))])
-        self.assertTrue(TestAST.test(input,str(expect),338))
+        self.assertTrue(TestAST.test(input,str(expect),348))
     
-    def test339(self):
+    def test49(self):
         input = """
         class ID {
             static int[4] total={0,0,0,0};
@@ -1063,248 +1005,8 @@ class ASTGenSuite(unittest.TestCase):
         block2 = Block([], [ass1, ass2])
         method_decl2 = MethodDecl(Instance(), Id("<init>"), [VarDecl(Id("name"), StringType(), None)], None, block2)
         expect = Program([ClassDecl(Id("ID"),[a1, a2, method_decl1, method_decl2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),339))
+        self.assertTrue(TestAST.test(input,str(expect),349))
     
-    def test340(self):
-        input = """
-        class main extends Main {
-            static int count = 0;
-
-            void method(){
-                var := new Cat().name;
-                for i:= 0 to arr[2] do
-                    in := (sys.in(sys.in(in)))[123];
-            }
-        }
-        """
-        a1 = AttributeDecl(Static(), VarDecl(Id("count"), IntType(), IntLiteral(0)))
-        ass1 = Assign(Id("var"), FieldAccess(NewExpr(Id("Cat"), []), Id("name")))
-        ass2 = Assign(Id("in"), ArrayCell(CallExpr(Id("sys"), Id("in"), [CallExpr(Id("sys"), Id("in"), [Id("in")])]), IntLiteral(123)))
-        for1 = For(Id("i"), IntLiteral(0), ArrayCell(Id("arr"), IntLiteral(2)), True, ass2)
-        block = Block([], [ass1, for1])
-        method_decl = MethodDecl(Instance(), Id("method"), [], VoidType(), block)
-        expect = Program([ClassDecl(Id("main"),[a1, method_decl], Id("Main"))])
-        self.assertTrue(TestAST.test(input,str(expect),340))
-    
-    def test341(self):
-        input = """
-        class ABC extends DEF{
-            static Void method(){
-                if "" then
-                in := 123 - 4234e-5 +- 432 || !false;
-                inp._._ := {"123", nil, this} * in;
-            }
-        }
-        """
-        ass1 = Assign(Id("in"), BinaryOp("||", BinaryOp("+", BinaryOp("-", IntLiteral(123), FloatLiteral(4234e-5)), UnaryOp("-", IntLiteral(432))), UnaryOp("!", BooleanLiteral(False))))
-        ass2 = Assign(FieldAccess(FieldAccess(Id("inp"), Id("_")), Id("_")), BinaryOp("*", ArrayLiteral([StringLiteral('"123"'), NullLiteral(), SelfLiteral()]), Id("in")))
-        if_stmt = If(StringLiteral('""'), ass1)
-        block = Block([], [if_stmt, ass2])
-        method_decl = MethodDecl(Static(), Id("method"), [], ClassType(Id("Void")), block)
-        expect = Program([ClassDecl(Id("ABC"),[method_decl], Id("DEF"))])
-        self.assertTrue(TestAST.test(input,str(expect),341))
-    
-    def test342(self):
-        input = """
-        class complex extends simple {
-            void nothing_to_return(){
-                c := sys.count(/*/*DDDDDD*/) * sys.f(214);
-            }
-
-            int main(){
-                this.nothing_to_return();   /* call method */
-                (a[0]).x := {12, 4} * "ad" + 14 ---- 12 + !!(!!3) % arr["b" - 97];
-
-                return {12, 4}[1];       #   ----> successful or not <---- case 289
-            }
-        }
-        """
-        ass1 = Assign(Id("c"), BinaryOp("*", CallExpr(Id("sys"), Id("count"), []), CallExpr(Id("sys"), Id("f"), [IntLiteral(214)])))
-        method_decl1 = MethodDecl(Instance(), Id("nothing_to_return"), [], VoidType(), Block([], [ass1]))
-        lhs = BinaryOp("-", BinaryOp("+", BinaryOp("*", ArrayLiteral([IntLiteral(12), IntLiteral(4)]), StringLiteral('"ad"')), IntLiteral(14)), UnaryOp("-", UnaryOp("-", UnaryOp("-", IntLiteral(12)))))
-        rhs = BinaryOp("%", UnaryOp("!", UnaryOp("!", UnaryOp("!", UnaryOp("!", IntLiteral(3))))), ArrayCell(Id("arr"), BinaryOp("-", StringLiteral('"b"'), IntLiteral(97))))
-        ass2 = Assign(FieldAccess(ArrayCell(Id("a"), IntLiteral(0)), Id("x")), BinaryOp("+", lhs, rhs))
-        return_stmt = Return(ArrayCell(ArrayLiteral([IntLiteral(12), IntLiteral(4)]), IntLiteral(1)))
-        block2 = Block([], [CallStmt(SelfLiteral(), Id("nothing_to_return"), []), ass2, return_stmt])
-        method_decl2 = MethodDecl(Instance(), Id("main"), [], IntType(), block2)
-        expect = Program([ClassDecl(Id("complex"),[method_decl1, method_decl2], Id("simple"))])
-        self.assertTrue(TestAST.test(input,str(expect),342))
-    
-    
-    def test343(self):
-        input = """
-        class complex extends simple {
-            void nothing_to_return(){
-                sys.print_some_thing(nil, {this, nil});     # print some thing, i dont know
-            }
-
-            int[3] main(){
-                final boolean variable = this % nil;
-                return {0001., false, ""}[variable] * !"ad" / !nil; 
-            }
-        }
-        """
-        call1 = CallStmt(Id("sys"), Id("print_some_thing"), [NullLiteral(), ArrayLiteral([SelfLiteral(), NullLiteral()])])
-        method_decl1 = MethodDecl(Instance(), Id("nothing_to_return"), [], VoidType(), Block([], [call1]))
-        c1 = ConstDecl(Id("variable"), BoolType(), BinaryOp("%", SelfLiteral(), NullLiteral()))
-        lhs = ArrayCell(ArrayLiteral([FloatLiteral(1.), BooleanLiteral(False), StringLiteral('""')]), Id("variable"))
-        return_stmt = Return(BinaryOp("/", BinaryOp("*", lhs, UnaryOp("!", StringLiteral('"ad"'))), UnaryOp("!", NullLiteral())))
-        method_decl2 = MethodDecl(Instance(), Id("main"), [], ArrayType(3,IntType()), Block([c1], [return_stmt]))
-        expect = Program([ClassDecl(Id("complex"), [method_decl1, method_decl2], Id("simple"))])
-        self.assertTrue(TestAST.test(input,str(expect),343))
-    
-    def test344(self):
-        input = """
-        class BlaBluBla {
-            static int main = "main";
-
-            void[1] foo(int n; float m, String){
-                if n == 0 then
-                    return nil;
-                else
-                    return n % sys.reduce(m);
-            }
-
-            static void main(){
-                if sys.flag then
-                    this.foo(n, n*m);
-                else
-                {{
-                    c := this[0] + x[!{1,2, 4} < nil];
-                    sys.print(c);
-                }}
-            }
-        }
-        """
-        a1 = AttributeDecl(Static(), VarDecl(Id("main"), IntType(), StringLiteral('"main"')))
-        if1 = If(BinaryOp("==", Id("n"), IntLiteral(0)), Return(NullLiteral()), Return(BinaryOp("%", Id("n"), CallExpr(Id("sys"), Id("reduce"), [Id("m")]))))
-        method_decl1 = MethodDecl(Instance(), Id("foo"), [VarDecl(Id("n"), IntType(), None), VarDecl(Id("m"), FloatType(), None), VarDecl(Id("String"), FloatType(), None)], ArrayType(1, VoidType()), Block([], [if1]))
-        ass1 = Assign(Id("c"), BinaryOp("+", ArrayCell(SelfLiteral(), IntLiteral(0)), ArrayCell(Id("x"), BinaryOp("<", UnaryOp("!", ArrayLiteral([IntLiteral(1), IntLiteral(2), IntLiteral(4)])), NullLiteral()))))
-        block = Block([], [Block([], [ass1, CallStmt(Id("sys"), Id("print"), [Id("c")])])])
-        if2 = If(FieldAccess(Id("sys"), Id("flag")), CallStmt(SelfLiteral(), Id("foo"), [Id("n"), BinaryOp("*", Id("n"), Id("m"))]), block)
-        method_decl2 = MethodDecl(Static(), Id("main"), [], VoidType(), Block([], [if2]))
-        expect = Program([ClassDecl(Id("BlaBluBla"),[a1, method_decl1, method_decl2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),344))
-    
-    def test345(self):
-        input = """
-        class Main extends ABC{
-            inT x;
-
-            static void main(string args){
-                Main myObj = new Main();
-                myObj.att.x := sys.get.randint(1, 50);
-                sys.out().println(myObj.x);
-                if ((myObj.att.x == 2) == 1) then {}
-            }
-        }
-        """
-        a1 = AttributeDecl(Instance(), VarDecl(Id("x"), ClassType(Id("inT")), None))
-        v1 = VarDecl(Id("myObj"), ClassType(Id("Main")), NewExpr(Id("Main"), []))
-        ass1 = Assign(FieldAccess(FieldAccess(Id("myObj"), Id("att")), Id("x")), CallExpr(FieldAccess(Id("sys"), Id("get")), Id("randint"), [IntLiteral(1), IntLiteral(50)]))
-        call1 = CallStmt(CallExpr(Id("sys"), Id("out"), []), Id("println"), [FieldAccess(Id("myObj"), Id("x"))])
-        if1 = If(BinaryOp("==", BinaryOp("==", FieldAccess(FieldAccess(Id("myObj"), Id("att")), Id("x")), IntLiteral(2)), IntLiteral(1)), Block([], []), None)
-        method_decl = MethodDecl(Static(), Id("main"), [VarDecl(Id("args"), StringType(), None)], VoidType(), Block([v1], [ass1, call1, if1]))
-        expect = Program([ClassDecl(Id("Main"),[a1, method_decl], Id("ABC"))])
-        self.assertTrue(TestAST.test(input,str(expect),345))
-    
-    def test346(self):
-        input = """
-        class Add extends Operator {
-            boolean accumulated(int init; int n, step){
-                float s = init;
-                for i := 0 to n do
-                    s := s + step;
-                return sys.to_string(s, reverse==true);
-            }
-
-            int main(){
-                sys.print("s = ", this.accumulated(0, 10, 2e-3));
-            }
-        }
-        """
-        v1 = VarDecl(Id("s"), FloatType(), Id("init"))
-        for1 = For(Id("i"), IntLiteral(0), Id("n"), True, Assign(Id("s"), BinaryOp("+", Id("s"), Id("step"))))
-        return1 = Return(CallExpr(Id("sys"), Id("to_string"), [Id("s"), BinaryOp("==", Id("reverse"), BooleanLiteral(True))]))
-        method_decl1 = MethodDecl(Instance(), Id("accumulated"), [VarDecl(Id("init"), IntType(), None), VarDecl(Id("n"), IntType(), None), VarDecl(Id("step"), IntType(), None)], BoolType(), Block([v1], [for1, return1]))
-        call1 = CallStmt(Id("sys"), Id("print"), [StringLiteral('"s = "'), CallExpr(SelfLiteral(), Id("accumulated"), [IntLiteral(0), IntLiteral(10), FloatLiteral(2e-3)])])
-        method_decl2 = MethodDecl(Instance(), Id("main"), [], IntType(), Block([], [call1]))
-        expect = Program([ClassDecl(Id("Add"),[method_decl1, method_decl2], Id("Operator"))])
-        self.assertTrue(TestAST.test(input,str(expect),346))
-    
-    def test347(self):
-        input = """
-        class Main extends ABC{
-            static final Int i = sys.get.randint(1, 10);
-
-            static float main(string args){
-                if i >= 5 then
-                if i >= 4 then
-                if i >= 3 then
-                if i >= 2 then
-                if i >= 1 then
-                {
-                }
-                sys.print("haha");
-                return this;
-            }
-        }
-
-        class ABC extends Main{
-
-        }
-        """
-        a1 = AttributeDecl(Static(), ConstDecl(Id("i"), ClassType(Id("Int")), CallExpr(FieldAccess(Id("sys"), Id("get")), Id("randint"), [IntLiteral(1), IntLiteral(10)])))
-        if5 = If(BinaryOp(">=", Id("i"), IntLiteral(1)), Block([], []), None)
-        if4 = If(BinaryOp(">=", Id("i"), IntLiteral(2)), if5, None)
-        if3 = If(BinaryOp(">=", Id("i"), IntLiteral(3)), if4, None)
-        if2 = If(BinaryOp(">=", Id("i"), IntLiteral(4)), if3, None)
-        if1 = If(BinaryOp(">=", Id("i"), IntLiteral(5)), if2, None)
-        call1 = CallStmt(Id("sys"), Id("print"), [StringLiteral('"haha"')])
-        method_decl = MethodDecl(Static(), Id("main"), [VarDecl(Id("args"), StringType(), None)], FloatType(), Block([],[if1, call1, Return(SelfLiteral())]))
-        expect = Program([ClassDecl(Id("Main"),[a1, method_decl], Id("ABC")), ClassDecl(Id("ABC"),[], Id("Main"))])
-        self.assertTrue(TestAST.test(input,str(expect),347))
-
-    def test348(self):
-        input = """
-        class main{
-            res func(){
-                string k = this;
-                k := !-k;
-                a[2 + 3] := calc.foo(2 + k, k, a[0]);
-                m.n.p.q := a[k + b[2 + c[2]]];
-                return m;
-            }
-            static string str = "str", str1;
-        }
-        """
-        v1 = VarDecl(Id("k"), StringType(), SelfLiteral())
-        ass1 = Assign(Id("k"), UnaryOp("!", UnaryOp("-", Id("k"))))
-        lhs1 = ArrayCell(Id("a"), BinaryOp("+", IntLiteral(2), IntLiteral(3)))
-        rhs1 = CallExpr(Id("calc"), Id("foo"), [BinaryOp("+", IntLiteral(2), Id("k")), Id("k"), ArrayCell(Id("a"), IntLiteral(0))])
-        ass2 = Assign(lhs1, rhs1)
-        lhs = FieldAccess(FieldAccess(FieldAccess(Id('m'),Id('n')),Id('p')),Id('q'))
-        rhs = ArrayCell(Id("a"), BinaryOp("+", Id("k"), ArrayCell(Id("b"), BinaryOp("+", IntLiteral(2), ArrayCell(Id("c"), IntLiteral(2))))))
-        ass3 = Assign(lhs, rhs)
-        return_stmt = Return(Id("m"))
-        block = Block([v1], [ass1, ass2, ass3, return_stmt])
-        method_decl = MethodDecl(Instance(), Id("func"), [], ClassType(Id("res")), block)
-        a1 = AttributeDecl(Static(), VarDecl(Id("str"), StringType(), StringLiteral('"str"')))
-        a2 = AttributeDecl(Static(), VarDecl(Id("str1"), StringType(), None))
-        expect = Program([ClassDecl(Id("main"),[method_decl, a1, a2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),348))
-    
-    
-    def test349(self):
-        input = """
-         class A{
-            int main(){
-                v := v <= d && d; 
-            }
-        }
-        """
-        expect = str(Program([ClassDecl(classname=Id('A'),memlist=[MethodDecl(name=Id('main'),kind=Instance(),param=[],returnType=IntType(),body=Block([],[Assign(lhs=Id('v'),exp=BinaryOp('<=',Id('v'),BinaryOp('&&',Id('d'),Id('d'))))]))])]))
-        self.assertTrue(TestAST.test(input,expect,349))
 
     def test_350(self):
         input = """class ppl extends bbl {
@@ -1317,7 +1019,7 @@ class ASTGenSuite(unittest.TestCase):
         expect= """Program([ClassDecl(Id(ppl),Id(bbl),[AttributeDecl(Static,ConstDecl(Id(bbl),ArrayType(5,IntType),IntLit(1))),AttributeDecl(Static,ConstDecl(Id(ppl),ArrayType(5,IntType),None)),MethodDecl(Id(main),Instance,[],VoidType,Block([],[AssignStmt(ArrayCell(Id(a),BinaryOp(+,IntLit(3),CallExpr(Id(x),Id(foo),[IntLit(2)]))),BinaryOp(+,ArrayCell(Id(a),ArrayCell(Id(b),IntLit(2))),IntLit(3))),AssignStmt(ArrayCell(FieldAccess(Id(x),Id(b)),IntLit(2)),ArrayCell(CallExpr(Id(x),Id(m),[]),IntLit(3)))]))])])"""
         self.assertTrue(TestAST.test(input, expect, 350))
     
-    def test348(self):
+    def test51(self):
         input = """
         class main extends Main {
             string nothing(){
@@ -1335,9 +1037,9 @@ class ASTGenSuite(unittest.TestCase):
         return1 = Return(BinaryOp("^", Id("str"), StringLiteral('"= \\"2\\""')))
         method_decl2 = MethodDecl(Static(), Id("main"), [], StringType(), Block([], [ass1, return1]))
         expect = Program([ClassDecl(Id("main"),[method_decl1, method_decl2], Id("Main"))])
-        self.assertTrue(TestAST.test(input,str(expect),348))
+        self.assertTrue(TestAST.test(input,str(expect),351))
     
-    def test349(self):
+    def test52(self):
         input = """
         class Add extends Operator {
             Nil[2] Operator(Nil[2] n, m){
@@ -1360,9 +1062,9 @@ class ASTGenSuite(unittest.TestCase):
         block2 = Block([v1], [Return(Id("a"))])
         method_decl1 = MethodDecl(Instance(), Id("Operator"), [VarDecl(Id("n"),  ArrayType(2, ClassType(Id("Nil")))), VarDecl(Id("m"), ArrayType(2, ClassType(Id("Nil"))))],  ArrayType(2, ClassType(Id("Nil"))), Block([], [block1, block2]))
         expect = Program([ClassDecl(Id("Add"),[method_decl1], Id("Operator"))])
-        self.assertTrue(TestAST.test(input,str(expect),349))
+        self.assertTrue(TestAST.test(input,str(expect),352))
     
-    def test350(self):
+    def test53(self):
         input = """
         class Main{
             int x;
@@ -1381,13 +1083,13 @@ class ASTGenSuite(unittest.TestCase):
         call1 = CallStmt(Id("sys"), Id("print"), [BinaryOp("+", StringLiteral('"Hello"'), StringLiteral('''"I'm NTD"'''))])
         method_decl = MethodDecl(Static(), Id("main"), [VarDecl(Id("args"), FloatType(), None)], StringType(), Block([], [ass1, call1, Return(IntLiteral(0))]))
         expect = Program([ClassDecl(Id("Main"),[a1, a2, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),350))
+        self.assertTrue(TestAST.test(input,str(expect),353))
     
-    def test351(self):
+    def test54(self):
         input = """
         class Main extends ABC{
             final boolean x, y = true, z;
-            static int[5][5][5][5] count = nil;
+            static int[5] count = nil;
 
             static void main(float[5] args){
                 final float nill = 2.e-5;
@@ -1401,16 +1103,16 @@ class ASTGenSuite(unittest.TestCase):
         a1 = AttributeDecl(Instance(), ConstDecl(Id("x"), BoolType(), None))
         a2 = AttributeDecl(Instance(), ConstDecl(Id("y"), BoolType(), BooleanLiteral(True)))
         a3 = AttributeDecl(Instance(), ConstDecl(Id("z"), BoolType(), None))
-        a4 = AttributeDecl(Static(), VarDecl(Id("count"), ArrayType(5, ArrayType(5, ArrayType(5, ArrayType(5, IntType())))), NullLiteral()))
+        a4 = AttributeDecl(Static(), VarDecl(Id("count"), ArrayType(5, IntType()), NullLiteral()))
         v1 = ConstDecl(Id("nill"), FloatType(), FloatLiteral(2.e-5))
         ass1 = Assign(Id("x"), CallExpr(CallExpr(Id("sys"), Id("get"), []), Id("randint"), [IntLiteral(1), IntLiteral(100)]))
         if1 = If(NewExpr(Id("Obj"), [SelfLiteral(), IntLiteral(0)]), Return(Id("nill")))
         return1 = Return(UnaryOp("+", NullLiteral()))
         method_decl = MethodDecl(Static(), Id("main"), [VarDecl(Id("args"), ArrayType(5, FloatType()))], VoidType(), Block([v1], [ass1, if1, return1]))
         expect = Program([ClassDecl(Id("Main"),[a1, a2, a3, a4, method_decl], Id("ABC"))])
-        self.assertTrue(TestAST.test(input,str(expect),351))
+        self.assertTrue(TestAST.test(input,str(expect),354))
     
-    def test352(self):
+    def test55(self):
         input = """
         class Calculation{
             static boolean findMax(bool[3] arr){
@@ -1430,9 +1132,9 @@ class ASTGenSuite(unittest.TestCase):
         call1 = CallStmt(Id("sys"), Id("print"), [CallExpr(SelfLiteral(), Id("findMax"), [ArrayLiteral([IntLiteral(1), IntLiteral(2), IntLiteral(3), IntLiteral(4), IntLiteral(5), IntLiteral(6), IntLiteral(7), IntLiteral(8), IntLiteral(9), IntLiteral(10)])])])
         method_decl2 = MethodDecl(Static(), Id("main"), [], StringType(), Block([], [call1, Return(IntLiteral(0))]))
         expect = Program([ClassDecl(Id("Calculation"),[method_decl1, method_decl2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),352))
+        self.assertTrue(TestAST.test(input,str(expect),355))
     
-    def test353(self):
+    def test56(self):
         input = """
         class Extends{
             HelloWorld(int n){
@@ -1454,9 +1156,9 @@ class ASTGenSuite(unittest.TestCase):
         for1 = For(Id("i"), IntLiteral(0), FieldAccess(SelfLiteral(), Id("n")), True, block)
         method_decl2 = MethodDecl(Instance(), Id("<init>"), [], None, Block([v1], [for1]))
         expect = Program([ClassDecl(Id("Extends"),[method_decl1, method_decl2], None)])
-        self.assertTrue(TestAST.test(input,str(expect),353))
+        self.assertTrue(TestAST.test(input,str(expect),356))
     
-    def test354(self):
+    def test57(self):
         input = """
         class Class extends Extends {
             static int[5] arr = {1, 2, 3,4};
@@ -1479,9 +1181,9 @@ class ASTGenSuite(unittest.TestCase):
         for2 = For(Id("i"), Id("n"), CallExpr(Id("s2"), Id("length"), []), False, Assign(ArrayCell(Id("tmp"), BinaryOp("+", CallExpr(Id("s1"), Id("length"), []), Id("i"))), ArrayCell(Id("s2"), Id("i"))))
         method_decl = MethodDecl(Instance(), Id("concat"), [v1, v2], StringType(), Block([v3], [for1, for2, Return(Id("tmp"))]))
         expect = Program([ClassDecl(Id("Class"),[a1, method_decl], Id("Extends"))])
-        self.assertTrue(TestAST.test(input,str(expect),354))
+        self.assertTrue(TestAST.test(input,str(expect),357))
     
-    def test355(self):
+    def test58(self):
         input = """
         class DEF extends ABC {
             int main(){
@@ -1498,9 +1200,9 @@ class ASTGenSuite(unittest.TestCase):
         for1 = For(Id("i"), NullLiteral(), SelfLiteral(), True, CallStmt(Id("sys"), Id("writeln"), [Id("i")]))
         method_decl = MethodDecl(Instance(), Id("main"), [], IntType(), Block([c1, c2, c3], [for1, Return(Id("r"))]))
         expect = Program([ClassDecl(Id("DEF"),[method_decl], Id("ABC"))])
-        self.assertTrue(TestAST.test(input,str(expect),355))
+        self.assertTrue(TestAST.test(input,str(expect),358))
     
-    def test356(self):
+    def test59(self):
         input = """
         class BlaBla extends BlaBlas{
             void main(){
@@ -1514,9 +1216,9 @@ class ASTGenSuite(unittest.TestCase):
         if1 = If(FieldAccess(Id("sys"), Id("flag")), CallStmt(Id("sys"), Id("print_some_thing"), []), If(UnaryOp("!", FieldAccess(Id("sys"), Id("flag"))), CallStmt(Id("sys"), Id("print_some_thing_else"), [])))
         method_decl = MethodDecl(Instance(), Id("main"), [], VoidType(), Block([], [if1]))
         expect = Program([ClassDecl(Id("BlaBla"),[method_decl], Id("BlaBlas"))])
-        self.assertTrue(TestAST.test(input,str(expect),356))
+        self.assertTrue(TestAST.test(input,str(expect),359))
     
-    def test357(self):
+    def test60(self):
         input = """
         class Luxubu {
             final int main = "main".extract_some_thing("hihi");
@@ -1533,9 +1235,9 @@ class ASTGenSuite(unittest.TestCase):
         if1 = If(BinaryOp("<=", BinaryOp("!=", Id("n"), UnaryOp("-", IntLiteral(5))), UnaryOp("-",  IntLiteral(5))), Return(BinaryOp(">=", IntLiteral(0), FloatLiteral(1.))), Return(BinaryOp("/", Id("n"), CallExpr(Id("functools"), Id("reduce"), [FieldAccess(Id("lambda"), Id("blabla"))]))))
         method_decl = MethodDecl(Instance(), Id("<init>"), [VarDecl(Id("n"), IntType(), None), VarDecl(Id("m"), FloatType(), None)], None, Block([], [if1]))
         expect = Program([ClassDecl(Id("Luxubu"),[a1, method_decl], None)])
-        self.assertTrue(TestAST.test(input,str(expect),357))
+        self.assertTrue(TestAST.test(input,str(expect),360))
     
-    def test358(self):
+    def test61(self):
         input = """
         class complex extends simple {
             string str(){
@@ -1556,9 +1258,9 @@ class ASTGenSuite(unittest.TestCase):
         method_decl1 = MethodDecl(Instance(), Id("str"), [], StringType(), Block([], []))
         method_decl2 = MethodDecl(Instance(), Id("len"), [], ClassType(Id("INT")), Block([], [Return(FieldAccess(SelfLiteral(), Id("len")))]))
         expect = Program([ClassDecl(Id("complex"),[method_decl1, method_decl2, a1, a2, a3], Id("simple"))])
-        self.assertTrue(TestAST.test(input,str(expect),358))
+        self.assertTrue(TestAST.test(input,str(expect),361))
     
-    def test359(self):
+    def test62(self):
         input = """
         class main{
             string foo(){
@@ -1584,8 +1286,495 @@ class ASTGenSuite(unittest.TestCase):
         ass2 = Assign(FieldAccess(Id("a"), Id("a")), FieldAccess(Id("b"), Id("b")))
         method_decl2 = MethodDecl(Instance(), Id("method"), [], VoidType(), Block([], [ass1, ass2]))
         expect = Program([ClassDecl(Id("main"),[method_decl1], None), ClassDecl(Id("main"),[AttributeDecl(Instance(), v1), method_decl2], Id("Main"))])
-        self.assertTrue(TestAST.test(input,str(expect),359))
+        self.assertTrue(TestAST.test(input,str(expect),362))
     
+
+    def test72(self):
+        input = """
+        class Ex{
+            float a;
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            AttributeDecl(
+                                Instance(),
+                                VarDecl(
+                                    Id("a"),
+                                    FloatType(),
+                                    None
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 372))
+
+    def test73(self):
+        input = """
+        class Ex extends Ey {
+            final float a,b,c;
+            static int d,e,f;
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            AttributeDecl(
+                                Instance(),
+                                ConstDecl(
+                                    Id("a"),
+                                    FloatType(),
+                                    None
+                                )
+                            ),
+                            AttributeDecl(
+                                Instance(),
+                                ConstDecl(
+                                    Id("b"),
+                                    FloatType(),
+                                    None
+                                )
+                            ),
+                            AttributeDecl(
+                                Instance(),
+                                ConstDecl(
+                                    Id("c"),
+                                    FloatType(),
+                                    None
+                                )
+                            ),
+                            AttributeDecl(
+                                Static(),
+                                VarDecl(
+                                    Id("d"),
+                                    IntType(),
+                                    None
+                                )
+                            ),
+                            AttributeDecl(
+                                Static(),
+                                VarDecl(
+                                    Id("e"),
+                                    IntType(),
+                                    None
+                                )
+                            ),
+                            AttributeDecl(
+                                Static(),
+                                VarDecl(
+                                    Id("f"),
+                                    IntType(),
+                                    None
+                                )
+                            )
+                        ],
+                        Id("Ey")
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(str(input), expect, 373))
+
+    def test74(self):
+        input = """
+        class Ex{
+            int a = -(10+"3") + 2*10;
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            AttributeDecl(
+                                Instance(),
+                                VarDecl(
+                                    Id("a"),
+                                    IntType(),
+                                    BinaryOp(
+                                        "+",
+                                        UnaryOp(
+                                            "-",
+                                            BinaryOp(
+                                                "+",
+                                                IntLiteral(10),
+                                                StringLiteral('"3"')
+                                            )
+                                        ),
+                                        BinaryOp(
+                                            "*",
+                                            IntLiteral(2),
+                                            IntLiteral(10)
+                                        )
+                                    )
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 374))
+
+    def test75(self):
+        input = """
+        class Ex{
+            int a = this.b;
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            AttributeDecl(
+                                Instance(),
+                                VarDecl(
+                                    Id("a"),
+                                    IntType(),
+                                    FieldAccess(
+                                        SelfLiteral(),
+                                        Id("b")
+                                    )
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 375))
+
+    def test76(self):
+        input = """
+        class Ex{
+            A a = this.b() + new Ex(x+y) - nil;
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            AttributeDecl(
+                                Instance(),
+                                VarDecl(
+                                    Id("a"),
+                                    ClassType(Id("A")),
+                                    BinaryOp(
+                                        "-",
+                                        BinaryOp(
+                                            "+",
+                                            CallExpr(
+                                                SelfLiteral(),
+                                                Id("b"),
+                                                []
+                                            ),
+                                            NewExpr(
+                                                Id("Ex"),
+                                                [
+                                                    BinaryOp(
+                                                        "+",
+                                                        Id("x"),
+                                                        Id("y")
+                                                    )
+                                                ]
+                                            )
+                                        ),
+                                        NullLiteral()
+                                    )
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 376))
+
+    def test77(self):
+        input = """
+        class Ex{
+            A a = new A();
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            AttributeDecl(
+                                Instance(),
+                                VarDecl(
+                                    Id("a"),
+                                    ClassType(Id("A")),
+                                    NewExpr(
+                                        Id("A"),
+                                        []
+                                    )
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 377))
+
+    def test78(self):
+        input = """
+        class Ex{
+            A[10] a = {10,"10",10,"10",10,"10",10,"10",10,"10"};
+            static final int _f = this.a+b.c((this.value()).x);
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            AttributeDecl(
+                                Instance(),
+                                VarDecl(
+                                    Id("a"),
+                                    ArrayType(10, ClassType(Id("A"))),
+                                    ArrayLiteral(
+                                        [
+                                            IntLiteral(10),
+                                            StringLiteral('"10"'),
+                                            IntLiteral(10),
+                                            StringLiteral('"10"'),
+                                            IntLiteral(10),
+                                            StringLiteral('"10"'),
+                                            IntLiteral(10),
+                                            StringLiteral('"10"'),
+                                            IntLiteral(10),
+                                            StringLiteral('"10"'),
+                                        ]
+                                    )
+                                )
+                            ),
+                            AttributeDecl(
+                                Static(),
+                                ConstDecl(
+                                    Id("_f"),
+                                    IntType(),
+                                    BinaryOp(
+                                        "+",
+                                        FieldAccess(
+                                            SelfLiteral(),
+                                            Id("a")
+                                        ),
+                                        CallExpr(
+                                            Id("b"),
+                                            Id("c"),
+                                            [
+                                                FieldAccess(
+                                                    CallExpr(
+                                                        SelfLiteral(),
+                                                        Id("value"),
+                                                        []
+                                                    ),
+                                                    Id("x")
+                                                )
+                                            ]
+                                        )
+                                    )
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 378))
+
+    def test79(self):
+        input = """
+        class Ex{
+            void main() {
+            
+            }
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            MethodDecl(
+                                Instance(),
+                                Id("main"),
+                                [],
+                                VoidType(),
+                                Block(
+                                    [],
+                                    []
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 379))
+
+    def test80(self):
+        input = """
+        class Ex{
+            static int foo(float a,b; string c) {
+            
+            }
+            void main() {
+            
+            }
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            MethodDecl(
+                                Static(),
+                                Id("foo"),
+                                [
+                                    VarDecl(
+                                        Id("a"),
+                                        FloatType(),
+                                        None
+                                    ),
+                                    VarDecl(
+                                        Id("b"),
+                                        FloatType(),
+                                        None
+                                    ),
+                                    VarDecl(
+                                        Id("c"),
+                                        StringType(),
+                                        None
+                                    )
+                                ],
+                                IntType(),
+                                Block(
+                                    [],
+                                    []
+                                )
+                            ),
+                            MethodDecl(
+                                Instance(),
+                                Id("main"),
+                                [],
+                                VoidType(),
+                                Block(
+                                    [],
+                                    []
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 380))
+
+    def test81(self):
+        input = """
+        class Ex{
+            void main(int a) {
+                int a,b;
+                float c;
+            }
+        }
+        """
+        expect = str(
+            Program(
+                [
+                    ClassDecl(
+                        Id("Ex"),
+                        [
+                            MethodDecl(
+                                Instance(),
+                                Id("main"),
+                                [
+                                    VarDecl(
+                                        Id("a"),
+                                        IntType(),
+                                        None
+                                    )
+                                ],
+                                VoidType(),
+                                Block(
+                                    [
+                                        VarDecl(
+                                            Id("a"),
+                                            IntType(),
+                                            None
+                                        ),
+                                        VarDecl(
+                                            Id("b"),
+                                            IntType(),
+                                            None
+                                        ),
+                                        VarDecl(
+                                            Id("c"),
+                                            FloatType(),
+                                            None
+                                        )
+                                    ],
+                                    []
+                                )
+                            )
+                        ],
+                        None
+                    )
+                ]
+            )
+        )
+        self.assertTrue(TestAST.test(input, expect, 381))
+
+    def test82(self):
+        input = """
+            class duc extends Node {
+                void name(){
+                    for a:= new A() + 5 to d do {
+                        if flag then
+                            for b:= 7 to c do {}
+                        else if a!=5 then
+                           for b:= 8 downto c do {}
+                        else
+                            for b:= 9 to c do {}
+                    } 
+                }
+            }
+        """
+        expect = """Program([ClassDecl(Id(duc),Id(Node),[MethodDecl(Id(name),Instance,[],VoidType,Block([],[For(Id(a),BinaryOp(+,NewExpr(Id(A),[]),IntLit(5)),Id(d),True,Block([],[If(Id(flag),For(Id(b),IntLit(7),Id(c),True,Block([],[])]),If(BinaryOp(!=,Id(a),IntLit(5)),For(Id(b),IntLit(8),Id(c),False,Block([],[])]),For(Id(b),IntLit(9),Id(c),True,Block([],[])])))])])]))])])"""
+        self.assertTrue(TestAST.test(input,expect,382))
     # def test360(self):
     #     input = """
     #     class main extends Main {

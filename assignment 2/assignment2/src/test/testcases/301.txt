@@ -1,5 +1,3 @@
-
-        class main extends Main{
-
+class main {
+            final int a = 3;
         }
-        

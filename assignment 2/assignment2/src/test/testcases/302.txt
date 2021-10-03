@@ -1,5 +1,6 @@
+class main {
+            final int a = 3;
 
-        class main extends main{
-            static int a = 1;
+            main(){}
+            main(){}
         }
-        
