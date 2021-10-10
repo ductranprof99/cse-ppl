@@ -1,7 +1,7 @@
 
-        class simple{
-            float x, y = 1e9;
-            int[5] arr = {1.0e+5, 2e-9, true, "ab\tc", false};
-            Return;
+        class foo {
+            foo(){{}{}}
+            int a,b,c;
         }
+        class foo{static int z,b = true;}
         

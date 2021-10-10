@@ -1,1 +1,1 @@
-Error on line 9 col 16: float
+Error on line 1 col 10: }

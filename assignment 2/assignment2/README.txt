@@ -7,3 +7,12 @@ Then type: python run.py test ASTGenSuite
 
 
 
+
+
+def test(self):
+        input = """
+            
+        """
+        expect = str()
+        self.assertTrue(TestAST.test(input,expect,3))
+    

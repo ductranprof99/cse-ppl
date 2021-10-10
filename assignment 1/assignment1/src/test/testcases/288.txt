@@ -1,12 +1,8 @@
 
-        class complex extends simple {
-            void nothing_to_return(){
-                sys.print_some_thing();     # print some thing, i dont know
+        class foo {
+            int[5] cam(){
             }
-
-            int main(){
-                this.nothing_to_return();   /* call method */
-                return {12, 4} * "ad" + 14 ---- 12 + !!!!!!!!!!!!(!!3) % arr["b"];
-            }
+            foo(){{}{}}
+            int[5] b[5];
         }
         

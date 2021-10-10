@@ -1,12 +1,8 @@
 
-        class main extends Main {
-            void nothing(){
-                # really nothing :V
+        class foo {
+            int x.foo() = 9;
+            int[5] cam(){
             }
-            static string main(){
-                str := "1" + "1";
-                cls.f(1 >= 4) + cls.g(cls.f(cls.a("a", "af")));
-                return str ^ "= \"2\"";
-            }
+            foo(){{}{}}
         }
         

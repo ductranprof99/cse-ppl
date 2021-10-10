@@ -1,8 +1,11 @@
-class Example1 {
-                        void main(){
-                            int x;
-                            l[3] := 2*value*2/2-c;
-                            x := io.readInt();
-                            io.writeIntLn(this.factorial(x));
-                        }
-                    }
+
+        class foo {
+        int x,y;
+        static final int a = 10;
+            int function(A a,b,c; H n){
+                int k = 9, m =10;
+                m := n;
+                return x.foo();
+            }
+        }
+        

@@ -1,16 +1,13 @@
 
-        class Example2 extends ABC {
-            float length,width;
-            float getArea() {}
-            Shape(float length,width){
-            this.length := length;
-            this.width := width;
+        class ID {
+            string name;
+            ID(){
+                this.name:=nil;
             }
-            void main(){
-                s := new Rectangle(3,4);
-                io.writeFloatLn(s.getArea());
-                s := new Triangle(3,4);
-                io.writeFloatLn(s.getArea());
+            void not(){
+               string b;
+               b:="I dont know";
+               this.name:=this.name^b;
             }
-        } 
+        }
         

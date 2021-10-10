@@ -1,16 +1,8 @@
 
-        class Calculation{
-            int cal(){
-                int[10] arr = {0.};
-                for i := 0 to y do
-                {
-                    {
-                        # just a comment
-                        kk := 123;
-                        123 := kk;
-                    }
-                    io.writeln(i);
-                }
+        class foo {
+            string s ="huhuhu", l = true;
+            int[5] cam(){int a,b;}
             }
+            foo;
         }
         

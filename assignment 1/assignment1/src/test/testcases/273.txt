@@ -1,8 +1,10 @@
-class Example2 extends ABC {
-                        int length,width;
-                        float getArea() {}
-                        Shape(float length,width){
-                            this.length := length;
-                            this.width := width;
-                        }
-                    }
+
+        class foo {
+            int function(A a,b,c; H n){
+                int k = 9, m =10;
+                m := n;
+                return x.foo();
+                int n;
+            }
+        }
+        

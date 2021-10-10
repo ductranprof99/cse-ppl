@@ -2641,4 +2641,28 @@ class ASTGenSuite(unittest.TestCase):
         """
         expect = str(Program([ClassDecl(Id('CALL_STMT'),[MethodDecl(name=Id('main'),kind=Instance(),param=[],returnType=VoidType(),body=Block([],[CallStmt(obj=SelfLiteral(),method=Id('print'),param=[IntLiteral(1),ArrayLiteral([IntLiteral(1),StringLiteral('"this.b"')])])]))])]))
         self.assertTrue(TestAST.test(input,expect,352))
+
+    def test_program23(self):
+        """program"""
+        input = \
+            """
+class f extends S
+{
+  boolean[2] n =
+    !+L.G () ^ + +A.x / !- - - -+ + +this +
+    ! ! !this ^ +this ^ - -+I %
+    !-this ^ !this.JK ^ ! !this ^ !this ^ ! !+-this ^ this %
+    this ^ ! ! ! !this.XiszVEt ().u.Hr ().K ().O
+    && this.L % new eQ ().d () ^ new nA ().q % new FLI () >=
+    + +-this ^ -this ^ !+ +nil ^ !this.Y.VOf ().XTnyWWghD
+    || -A \\ - -+this ^ ! !nil ^ Q - +- -new V () ^ +-+this ^ !this - !-this
+    || this / 9E-81 +
+    + +this.oMC () ^ ! !nil ^ ! ! ! ! ! !this \\ !-+- -this %
+    this ^ ! ! !+ +-nil || !+-"`2*\ta=".N9 () ^ !-+this % !this ^ K
+    && f ^ ! !this, k;
+}
+
+        """
+        expect = str(Program([ClassDecl(Id("f"),[AttributeDecl(Instance(),VarDecl(Id("n"),ArrayType(2,BoolType()),BinaryOp(">=",BinaryOp("&&",BinaryOp("+",BinaryOp("/",BinaryOp("^",UnaryOp("!",UnaryOp("+",CallExpr(Id("L"),Id("G"),[]))),UnaryOp("+",UnaryOp("+",FieldAccess(Id("A"),Id("x"))))),UnaryOp("!",UnaryOp("-",UnaryOp("-",UnaryOp("-",UnaryOp("-",UnaryOp("+",UnaryOp("+",UnaryOp("+",SelfLiteral()))))))))),BinaryOp("%",BinaryOp("%",BinaryOp("^",BinaryOp("^",UnaryOp("!",UnaryOp("!",UnaryOp("!",SelfLiteral()))),UnaryOp("+",SelfLiteral())),UnaryOp("-",UnaryOp("-",UnaryOp("+",Id("I"))))),BinaryOp("^",BinaryOp("^",BinaryOp("^",BinaryOp("^",BinaryOp("^",UnaryOp("!",UnaryOp("-",SelfLiteral())),UnaryOp("!",FieldAccess(SelfLiteral(),Id("JK")))),UnaryOp("!",UnaryOp("!",SelfLiteral()))),UnaryOp("!",SelfLiteral())),UnaryOp("!",UnaryOp("!",UnaryOp("+",UnaryOp("-",SelfLiteral()))))),SelfLiteral())),BinaryOp("^",SelfLiteral(),UnaryOp("!",UnaryOp("!",UnaryOp("!",UnaryOp("!",FieldAccess(CallExpr(CallExpr(FieldAccess(CallExpr(SelfLiteral(),Id("XiszVEt"),[]),Id("u")),Id("Hr"),[]),Id("K"),[]),Id("O"))))))))),BinaryOp("%",BinaryOp("%",FieldAccess(SelfLiteral(),Id("L")),BinaryOp("^",CallExpr(NewExpr(Id("eQ"),[]),Id("d"),[]),FieldAccess(NewExpr(Id("nA"),[]),Id("q")))),NewExpr(Id("FLI"),[]))),BinaryOp("&&",BinaryOp("||",BinaryOp("||",BinaryOp("||",BinaryOp("^",BinaryOp("^",BinaryOp("^",UnaryOp("+",UnaryOp("+",UnaryOp("-",SelfLiteral()))),UnaryOp("-",SelfLiteral())),UnaryOp("!",UnaryOp("+",UnaryOp("+",NullLiteral())))),UnaryOp("!",FieldAccess(CallExpr(FieldAccess(SelfLiteral(),Id("Y")),Id("VOf"),[]),Id("XTnyWWghD")))),BinaryOp("-",BinaryOp("-",BinaryOp("\\",UnaryOp("-",Id("A")),BinaryOp("^",BinaryOp("^",UnaryOp("-",UnaryOp("-",UnaryOp("+",SelfLiteral()))),UnaryOp("!",UnaryOp("!",NullLiteral()))),Id("Q"))),BinaryOp("^",BinaryOp("^",UnaryOp("+",UnaryOp("-",UnaryOp("-",NewExpr(Id("V"),[])))),UnaryOp("+",UnaryOp("-",UnaryOp("+",SelfLiteral())))),UnaryOp("!",SelfLiteral()))),UnaryOp("!",UnaryOp("-",SelfLiteral())))),BinaryOp("+",BinaryOp("/",SelfLiteral(),FloatLiteral(9e-81)),BinaryOp("%",BinaryOp("\\",BinaryOp("^",BinaryOp("^",UnaryOp("+",UnaryOp("+",CallExpr(SelfLiteral(),Id("oMC"),[]))),UnaryOp("!",UnaryOp("!",NullLiteral()))),UnaryOp("!",UnaryOp("!",UnaryOp("!",UnaryOp("!",UnaryOp("!",UnaryOp("!",SelfLiteral()))))))),UnaryOp("!",UnaryOp("-",UnaryOp("+",UnaryOp("-",UnaryOp("-",SelfLiteral())))))),BinaryOp("^",SelfLiteral(),UnaryOp("!",UnaryOp("!",UnaryOp("!",UnaryOp("+",UnaryOp("+",UnaryOp("-",NullLiteral())))))))))),BinaryOp("%",BinaryOp("^",UnaryOp("!",UnaryOp("+",UnaryOp("-",CallExpr(StringLiteral('"`2*\ta="'),Id("N9"),[])))),UnaryOp("!",UnaryOp("-",UnaryOp("+",SelfLiteral())))),BinaryOp("^",UnaryOp("!",SelfLiteral()),Id("K")))),BinaryOp("^",Id("f"),UnaryOp("!",UnaryOp("!",SelfLiteral()))))))),AttributeDecl(Instance(),VarDecl(Id("k"),ArrayType(2,BoolType())))],Id("S"))]))
+        self.assertTrue(TestAST.test(input, expect, 323))
     

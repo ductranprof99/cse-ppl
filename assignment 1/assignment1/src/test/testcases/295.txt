@@ -1,10 +1,7 @@
 
-        class ABC extends DEF{
-            void method(){
-                if "" then
-                if 1 then
-                    inp := f23 + ads[2:10] +  ++++ 2 *f /* "87235jkfgshgsfg $&^# */ ;
-                else return 0;
+        class WAP {
+            void func(int a,b) {
+                return a == b % 2;
             }
         }
         

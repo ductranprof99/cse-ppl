@@ -1,10 +1,10 @@
 
-        class ABC extends DEF{
-            void method(){
-                if "" then
-                if 1 then
-                    inp := [234]fsfsg + 13 \. 124;
-                else return 0;
+        class WAP {
+            static int a = 0;
+            boolean[10000] a, b;
+            bool a = true;
+            string func(int a, b, float c) {
+                return 0;
             }
         }
         

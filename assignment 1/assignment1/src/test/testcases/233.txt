@@ -1,7 +1,3 @@
-
-        class A {
-            int get() {
-                a[4 + noope.foo(2)] := 2;
-            }
-        }
+class z {
+                    }
         

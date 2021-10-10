@@ -1,14 +1,9 @@
 
-        class complex extends simple {
-            void nothing_to_return(){
-                c := sys.count(/*/*DDDDDD*/) * sys.f(214);
+        class foo {
+            string s ="huhuhu";
+            int[5] cam(){int a,b[5];}
             }
-
-            int main(){
-                this.nothing_to_return();   /* call method */
-                a := {12, 4} * "ad" + 14 ---- 12 + !!!!!!!!!!!!(!!3) % arr["b" - 97];
-
-                return {12, 4}[1];       #   ----> successful or not <----
-            }
+            foo(){{}{}}
+            int[5] b;
         }
         

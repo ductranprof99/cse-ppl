@@ -1,5 +1,13 @@
 
-            class foo {
-                type[7857] n = this.Shape(x.foo(5)[4]*(!m) + (s >= m || m+-n));
+        class ID {
+            static int total=0;
+            string name;
+            ID(){
+                this.name:=nil;
             }
-            
+            ID(string name){
+                this.name:=name;
+                ID.total := ID.total +1;
+            }
+        }
+        

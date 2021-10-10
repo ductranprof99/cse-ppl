@@ -1,23 +1,7 @@
 
-        class Shape {
-            float length,width;
-            float getArea() {}
-            Shape(float length,width){
-                this.length := "length";
-                this.width := width;
-                return;
-                return;
-                return;
-                if flag then
-                    for x := ((((0||1)))) to something_big do
-                    for x := ((((0||1)))) to something_big do
-                        for x := ((((0||1)))) to something_big do
-                            for x := ((((0||1)))) to something_big do
-                                {
-                                    a.foo();
-                                }
-                else
-                    io.writeStrLn ("Expression is false");
-            }
+        class WAP {
+            static int a = 0;
+            boolean[10000] a, b;
+            bool a = true;
         }
         

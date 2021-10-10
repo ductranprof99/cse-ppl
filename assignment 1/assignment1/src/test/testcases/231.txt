@@ -1,16 +1,10 @@
-
-        class a{
-            int get() {
-                cfefer := ferb[35 - foo(2)];
-                return k.y();
-            }
-            int get() {
-
-                return kfer.y();
-            }
-            int get() {
-                ferfec := b[35 - foo(2)];
-                return tgrk.rfey();
-            }
+class Example2 extends ABC {
+                    static int a=555;
+                    Geometry(float length,width){
+                        return a*this.abc(n-1);
+                    }
+                    void main(){
+                        system.out.println("hello");
+                        system.out(println,22,5.2,"tr",true);
+                    }
         }
-        

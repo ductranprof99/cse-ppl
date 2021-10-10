@@ -1,22 +1,8 @@
 
-        class fasdfasdfasdf {
-            static int main = "main";
-
-            float foo(int n; float m, String){
-                if n == 0 then
-                    return 1.;
-                else
-                    return n % sys.reduce(m);
+        class foo {
+            int[5] cam(){
             }
-
-            void main(){
-                if sys.flag then
-                    this.foo(n, n*m);
-                else
-                {{
-                    c := "akf"[0] + x[{1,2, 4}];
-                    sys.print(c);
-                }}
-            }
+            foo(){{}{}}
+            B.boo(a) = 8*j;
         }
         

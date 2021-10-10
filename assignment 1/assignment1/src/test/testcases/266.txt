@@ -1,5 +1,5 @@
-class SHap {
-            int get() {
-                a := b[3 - foo(2)];
-            }
+
+        class ABC {
+            int c = !((a>=b) && (c<d) != 5 || -(abc && (c>=d)));
         }
+        

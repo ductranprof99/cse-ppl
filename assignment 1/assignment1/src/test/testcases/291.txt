@@ -1,10 +1,7 @@
 
-        class main extends Main {
-            int count = 0;
-
-            void method(){
-                sys.a.b.c().d.e.a.c.b().f(a, b, sys.b);
-                int a = 0;
+        class foo {
+            int[5] cam.foo(){int a,b;}
             }
+            foo;
         }
         

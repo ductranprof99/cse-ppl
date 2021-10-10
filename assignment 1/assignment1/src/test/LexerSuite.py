@@ -103,7 +103,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(input, expect, 129))
 
     def test_130(self):
-        self.assertTrue(TestLexer.test("\"", "Unclosed String: ", 130))
+        self.assertTrue(TestLexer.test("\"", "Unclosed String: \"", 130))
 
     def test_31(self):
         input = """"He asked me: \\"Where is John?\\"" """
@@ -112,7 +112,7 @@ class LexerSuite(unittest.TestCase):
             TestLexer.test(input, expect, 131))
 
     def test_32(self):
-        self.assertTrue(TestLexer.test("\"He asked me: ", "Unclosed String: He asked me: ", 132))
+        self.assertTrue(TestLexer.test("\"He asked me: ", "Unclosed String: \"He asked me: ", 132))
 
     def test_33(self):
         input = """class Triangle extends Shape {
@@ -129,7 +129,7 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(input, expect, 134))
 
     def test_35(self):
-        self.assertTrue(TestLexer.test("\"He", "Unclosed String: He", 135))
+        self.assertTrue(TestLexer.test("\"He", "Unclosed String: \"He", 135))
 
     def test_36(self):
         input = "static final int numOfShape = 0;"
@@ -169,7 +169,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_43(self):
         input = "\"abc\\e def\""
-        expect = "Illegal Escape In String: abc\\e"
+        expect = "Illegal Escape In String: \"abc\\e"
         self.assertTrue(TestLexer.test(input, expect, 143))
 
     def test_44(self):
@@ -189,7 +189,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_47(self):
         input = """a= \"He said: \" Hello \" \n \";"""
-        expect = """a,=,"He said: ",Hello,Unclosed String:  """
+        expect = """a,=,"He said: ",Hello,Unclosed String: " """
         self.assertTrue(TestLexer.test(input, expect, 147))
 
     def test_48(self):
@@ -224,7 +224,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_54(self):
         input = "\" \\h \""
-        expect = "Illegal Escape In String:  \h"
+        expect = "Illegal Escape In String: \" \h"
         self.assertTrue(TestLexer.test(input, expect, 154))
 
     def test_55(self):
@@ -293,10 +293,10 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test(""" "Ligal\\\ " """, """"Ligal\\\ ",<EOF>""", 175))
 
     def test_76(self):
-        self.assertTrue(TestLexer.test(""" "jasonmamoa \\k """, """Illegal Escape In String: jasonmamoa \\k""", 176))
+        self.assertTrue(TestLexer.test(""" "jasonmamoa \\k """, """Illegal Escape In String: "jasonmamoa \\k""", 176))
 
     def test_77(self):
-        self.assertTrue(TestLexer.test(""" "asdfa ' escaasdfasdpe """, """Unclosed String: asdfa ' escaasdfasdpe """, 177))
+        self.assertTrue(TestLexer.test(""" "asdfa ' escaasdfasdpe """, """Unclosed String: "asdfa ' escaasdfasdpe """, 177))
 
     def test_78(self):
         self.assertTrue(TestLexer.test("a*3+afdsfb   - 1", "a,*,3,+,afdsfb,-,1,<EOF>", 178))
@@ -312,7 +312,7 @@ class LexerSuite(unittest.TestCase):
 
     def test_82(self):
         self.assertTrue(
-            TestLexer.test(""" "Illegal \\b escape \\l" """, """Illegal Escape In String: Illegal \\b escape \\l""",
+            TestLexer.test(""" "Illegal \\b escape \\l" """, """Illegal Escape In String: "Illegal \\b escape \\l""",
                            182))
 
     def test_83(self):
@@ -414,12 +414,12 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.test("asfm@c34;", "asfm,Error Token @", 197))
 
     def test_98(self):
-        self.assertTrue(TestLexer.test(""" "Illegal \\k" """, """Illegal Escape In String: Illegal \\k""", 198))
+        self.assertTrue(TestLexer.test(""" "Illegal \\k" """, """Illegal Escape In String: "Illegal \\k""", 198))
 
     def test_99(self):
         self.assertTrue(TestLexer.test(""" "Ok I am fine ~" """, """"Ok I am fine ~",<EOF>""", 199))
 
     def test_100(self):
-        self.assertTrue(TestLexer.test(""" "asdfasdfasdf\r " """, "Unclosed String: asdfasdfasdf", 200))
+        self.assertTrue(TestLexer.test(""" "asdfasdfasdf\r " """, "Unclosed String: \"asdfasdfasdf", 200))
 
 

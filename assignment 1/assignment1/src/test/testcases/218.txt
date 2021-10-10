@@ -1,3 +1,14 @@
-class Example2 extends ABC { void main(){ for x := (s >= m || m+-n).adopt[x.foo(5)[4]*(!m)] + 
-        (s >= m || m+-n).asdfadf.b[12].a.c to (s >= m || m+-n).adoptx.foo(5)[4]*(!m) + (s >= m || m+-n).asdfadf.b[
-        12].a.c do { io.writeIntLn(x); } } } 
+
+        class ID {
+            string name;
+            ID(){
+                this.name:=nil;
+            }
+            void if(){
+               string b;
+               b:="I dont know";
+               this.name:=this.name^b;
+               return;
+            }
+        }
+        

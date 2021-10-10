@@ -1,9 +1,10 @@
 
-        class Main extends ABC{
-            float a = ----1234 || +++++++False + -+-+ 22222;
-
-            void main(){
-                b := {{{{}}}, {123}};
+        class WAP {
+            WAP(int a, b, c; string d; boolean e) {
+                a := 0;
+                b := 0;
+                for a := 5 to 10 do
+                    for b := 5 to 10 do
+                        break;
             }
         }
-        

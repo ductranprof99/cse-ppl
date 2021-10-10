@@ -1,5 +1,8 @@
 
-        class simple extends ABC {
-            static final string = "string \"", y = 1e9;
+        class foo {
+            int foo(int a,b,c){
+                for i:=5 to 9 do io.printf(5);
+                }
         }
+        class foo{static int z,b = true;}
         

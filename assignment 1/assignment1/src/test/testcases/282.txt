@@ -1,11 +1,7 @@
 
-        class complex extends simple {
-            void nothing_to_return(){
-                sys.print_some_thing();     # print some thing, i dont know\n
-            }
-
-            void main(){
-                this.nothing_to_return();   /* oh no, oh no, oh no no no no no*/*/
-            }
+        class foo{
+            static final int x, y = 7;
+            final int m = 9*a ,k = x.m()[6*a];
+            int main(){ x.b[2] := 8*x.m()[3]; return true;}
         }
         

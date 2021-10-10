@@ -1,8 +1,13 @@
 
-        class Example2 extends ABC {
-            void main(){
-                for x := (1) to 2 do
-                    io.writeIntLn(x);
+        class ID {
+            string name;
+            ID(){
+                this.name:=nil;
             }
-        } 
+            void not(){
+               string b;
+               b:="I dont know";
+               return this.name^b;
+            }
+        }
         

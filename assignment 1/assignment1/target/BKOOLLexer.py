@@ -358,7 +358,7 @@ class BKOOLLexer(Lexer):
         if actionIndex == 1:
 
             		y = str(self.text)
-            		raise UncloseString(y[1:])
+            		raise UncloseString(y)
             	
      
 
@@ -366,7 +366,7 @@ class BKOOLLexer(Lexer):
         if actionIndex == 2:
 
             		y = str(self.text)
-            		raise IllegalEscape(y[1:])
+            		raise IllegalEscape(y)
             	
      
 

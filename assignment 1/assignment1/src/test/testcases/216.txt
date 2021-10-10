@@ -1,3 +1,8 @@
-class foo { H[5] function(A a,b,c; H n){ (x.foo(5)[4]*(!m) + (s >= m || m+-n))[x.foo(5)[4]*(
-        !m) + (s >= m || m+-n)].adopt[x.foo(5)[4]*(!m) + (s >= m || m+-n).asdfadf.b[12].a.c] := exp; # test fail 
-        a.b.c.d } } 
+
+        class Example1 /* extends */ {
+            void main(){
+            string a;
+            a := "Hello world \n";
+            }
+        }
+        
