@@ -4,13 +4,25 @@ from abc import ABC
 class Kind(ABC):
     pass
 
-class Function(Kind):
-    def __str__(self):
-        return "Function"
-
 class Parameter(Kind):
     def __str__(self):
         return "Parameter"
+
+class Method(Kind):
+    def __str__(self):
+        return "Method"
+
+class Class(Kind):
+    def __str__(self):
+        return "Class"
+
+class Attribute(Kind):
+    def __str__(self):
+        return "Attribute"
+
+class Constant(Kind):
+    def __str__(self):
+        return "Constant"
 
 class Variable(Kind):
     def __str__(self):
@@ -56,13 +68,6 @@ class TypeMismatchInStatement(StaticError):
     def __str__(self):
         return "Type Mismatch In Statement: "+ str(self.stmt)
 
-class FunctionNotReturn(StaticError):
-    """m is a string that is the name of the function"""
-    def __init__(self,m):
-        self.m = m
-
-    def __str__(self):
-        return "Function "+ m + "Not Return "
 
 class BreakNotInLoop(StaticError):
     def __str__(self):
@@ -71,6 +76,18 @@ class BreakNotInLoop(StaticError):
 class ContinueNotInLoop(StaticError):
     def __str__(self):
         return "Continue Not In Loop"
+
+class IllegalArrayLiteral(StaticError):
+    def __init__(self,lit):
+        self.lit = lit
+
+    def __str__(self):
+        return "Illegal array literal: " + str(self.lit)
+
+
+
+
+
 
 class NoEntryPoint(StaticError):
     def __str__(self):
@@ -91,3 +108,11 @@ class UnreachableFunction(StaticError):
     def __str__(self):
         return "Unreachable function: "+ m 
 
+
+class FunctionNotReturn(StaticError):
+    """m is a string that is the name of the function"""
+    def __init__(self,m):
+        self.m = m
+
+    def __str__(self):
+        return "Function "+ m + "Not Return "

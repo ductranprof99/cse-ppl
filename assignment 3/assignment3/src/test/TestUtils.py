@@ -1,6 +1,9 @@
 import sys,os
 from antlr4 import *
 from antlr4.error.ErrorListener import ConsoleErrorListener,ErrorListener
+
+from StaticChecker import StaticChecker
+from StaticError import StaticError
 if not './main/bkool/parser/' in sys.path:
     sys.path.append('./main/bkool/parser/')
 if os.path.isdir('../target/main/bkool/parser') and not '../target/main/bkool/parser/' in sys.path:
@@ -9,11 +12,11 @@ from BKOOLLexer import BKOOLLexer
 from BKOOLParser import BKOOLParser
 from lexererr import *
 from ASTGeneration import ASTGeneration
-from StaticCheck import StaticChecker
+'''from StaticCheck import StaticChecker
 from StaticError import *
 from CodeGenerator import CodeGenerator
 import subprocess
-
+'''
 JASMIN_JAR = "./external/jasmin.jar"
 TEST_DIR = "./test/testcases/"
 SOL_DIR = "./test/solutions/"
@@ -54,7 +57,7 @@ class TestLexer:
     def printLexeme(dest,lexer):
         tok = lexer.nextToken()
         if tok.type != Token.EOF:
-            dest.write(tok.text+",")
+            dest.write(tok.text+";"+str(tok.type)+",")
             TestLexer.printLexeme(dest,lexer)
         else:
             dest.write("<EOF>")
@@ -108,6 +111,8 @@ class TestAST:
         TestAST.check(SOL_DIR,inputfile,num)
         dest = open(os.path.join(SOL_DIR,str(num) + ".txt"),"r")
         line = dest.read()
+        if line != expect:
+            print(line+"*"+expect+"*")
         return line == expect
 
     @staticmethod
@@ -150,7 +155,7 @@ class TestChecker:
             dest.write(str(e))
         finally:
             dest.close()
-
+'''
 class TestCodeGen():
     @staticmethod
     def test(input, expect, num):
@@ -192,5 +197,5 @@ class TestCodeGen():
             raise RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
         finally:
             f.close()
-            
+ '''           
             
