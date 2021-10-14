@@ -1,24 +1,30 @@
-# update: 16/07/2018
+#update: 6/04/2019
 from abc import ABC
+from dataclasses import dataclass
+from AST import *
 
 class Kind(ABC):
     pass
-
-class Parameter(Kind):
-    def __str__(self):
-        return "Parameter"
-
-class Method(Kind):
-    def __str__(self):
-        return "Method"
 
 class Class(Kind):
     def __str__(self):
         return "Class"
 
+class Method(Kind):
+    def __str__(self):
+        return "Method"
+
+class SpecialMethod(Kind):
+    def __str__(self):
+        return "Special Method"
+
 class Attribute(Kind):
     def __str__(self):
         return "Attribute"
+
+class Parameter(Kind):
+    def __str__(self):
+        return "Parameter"
 
 class Constant(Kind):
     def __str__(self):
@@ -34,85 +40,67 @@ class Identifier(Kind):
 
 class StaticError(Exception):
     pass
+@dataclass
 class Undeclared(StaticError):
-    """k: Kind
-       n: string: name of identifier """
-    def __init__(self,k,n):
-        self.k = k
-        self.n = n
+    k: Kind
+    n: str # name of identifier
     def __str__(self):
         return  "Undeclared "+ str(self.k) + ": " + self.n
-
+@dataclass
 class Redeclared(StaticError):
-    """k: Kind
-       n: string: name of identifier """
-    def __init__(self,k,n):
-        self.k = k
-        self.n = n
+    k: Kind
+    n: str # name of identifier
+
     def __str__(self):
         return  "Redeclared "+ str(self.k) + ": " + self.n
-
+@dataclass
 class TypeMismatchInExpression(StaticError):
-    """exp: AST.Expr"""
-    def __init__(self,exp):
-        self.exp = exp
+    exp: Expr
 
     def __str__(self):
         return  "Type Mismatch In Expression: "+ str(self.exp)
-
+@dataclass
 class TypeMismatchInStatement(StaticError):
-    """stmt:AST.Stmt"""
-    def __init__(self,stmt):
-        self.stmt = stmt
+    stmt:Stmt
 
     def __str__(self):
         return "Type Mismatch In Statement: "+ str(self.stmt)
+@dataclass
+class CannotAssignToConstant(StaticError):
+    stmt:Stmt
 
-
-class BreakNotInLoop(StaticError):
     def __str__(self):
-        return "Break Not In Loop"
+        return "Cannot Assign To Constant: "+ str(self.stmt)
+@dataclass
+class TypeMismatchInConstant(StaticError):
+    constdecl:ConstDecl
 
-class ContinueNotInLoop(StaticError):
     def __str__(self):
-        return "Continue Not In Loop"
+        return "Type Mismatch In Constant Declaration: "+ str(self.constdecl)
+@dataclass
+class NotConstantExpression(StaticError):
+    expr: Expr
 
+    def __str__(self):
+        return "Not Constant Expression: " + str(self.expr)
+@dataclass
+class MustInLoop(StaticError):
+    stmt:Stmt
+    def __str__(self):
+        return str(self.stmt) + " Not In Loop"
+@dataclass
+class IllegalConstantExpression(StaticError):
+    expr:Expr
+    def __str__(self):
+        return "Illegal Constant Expression: "+ str(self.expr)
+@dataclass
 class IllegalArrayLiteral(StaticError):
-    def __init__(self,lit):
-        self.lit = lit
-
+    arr:ArrayLiteral
     def __str__(self):
-        return "Illegal array literal: " + str(self.lit)
+        return "Illegal Array Literal: "+ str(self.arr)
 
-
-
-
-
-
-class NoEntryPoint(StaticError):
+@dataclass
+class IllegalMemberAccess(StaticError):
+    expr:Expr
     def __str__(self):
-        return "No entry point"
-
-class UnreachableStatement(StaticError):
-    """stmt is AST.Stmt"""
-    def __init__(self,stmt):
-        self.stmt = stmt
-    def __str__(self):
-        return "Unreachable statement: "+ str(self.stmt)
-
-class UnreachableFunction(StaticError):
-    """m is a string that is the name of the unreachable function"""
-    def __init__(self,m):
-        self.m = m
-
-    def __str__(self):
-        return "Unreachable function: "+ m 
-
-
-class FunctionNotReturn(StaticError):
-    """m is a string that is the name of the function"""
-    def __init__(self,m):
-        self.m = m
-
-    def __str__(self):
-        return "Function "+ m + "Not Return "
+        return "Illegal Member Access: " + str(self.expr)

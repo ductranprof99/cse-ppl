@@ -6,7 +6,8 @@ class CheckerSuite(unittest.TestCase):
     def test(self):
         input = """
             class Shape {
-                float length,width;
+                static float mehter;
+                float length,width,length;
                 float getArea() {
                 }
                 Shape(float length,width){
