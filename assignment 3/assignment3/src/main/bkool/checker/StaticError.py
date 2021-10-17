@@ -104,3 +104,4 @@ class IllegalMemberAccess(StaticError):
     expr:Expr
     def __str__(self):
         return "Illegal Member Access: " + str(self.expr)
+

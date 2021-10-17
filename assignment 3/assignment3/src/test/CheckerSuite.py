@@ -7,22 +7,19 @@ class CheckerSuite(unittest.TestCase):
         input = """
             class Shape {
                 static float mehter;
-                float length,width,length;
-                float getArea() {
+                float length,shape,shape;
+                float getArea(int shape) {
+                    length = 5;
                 }
-                Shape(float length,width){
-                    this.length := length;
-                    this.width := width;
-                }
+               
+                
             }
-                class Rectangle extends Shape {
-                float getArea(){
-        
-                return this.length * this.width;
-                }
-                }
+            
+            
+                
 
         """
-        expect = """Program([ClassDecl(Id(Shape),[AttributeDecl(Instance,VarDecl(Id(length),FloatType)),AttributeDecl(Instance,VarDecl(Id(width),FloatType)),MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[])),MethodDecl(Id(<init>),Instance,[param(Id(length),FloatType),param(Id(width),FloatType)],Block([],[AssignStmt(FieldAccess(Self(),Id(length)),Id(length)),AssignStmt(FieldAccess(Self(),Id(width)),Id(width))]))]),ClassDecl(Id(Rectangle),Id(Shape),[MethodDecl(Id(getArea),Instance,[],FloatType,Block([],[Return(BinaryOp(*,FieldAccess(Self(),Id(length)),FieldAccess(Self(),Id(width))))]))])])"""
+        # Neu muon check class truoc check param thi sao
+        expect =''
         self.assertTrue(TestChecker.test(input, expect, 400)) 
     

@@ -137,7 +137,7 @@ class MethodSymbol(Symbol): # method type
     
     def check(self):
         local = self.params + self.block.listVarInBlock
-        self.checkParamFisrt()
+        self.checkParamFirst()
         for i in range(0,len(self.block.listVarInBlock)):
             if self.block.listVarInBlock[i].name in local[:len(self.params)+i:]:
                 if self.block.listVarInBlock[i].isConst:
@@ -147,7 +147,7 @@ class MethodSymbol(Symbol): # method type
 
     def checkParamFirst(self):
         count = 0
-        if len(self.params > 2):
+        if len(self.params) > 2:
             for i in self.params[:-1:]:
                 for j in self.params[count::]:
                     if j.name == i.name:
@@ -268,7 +268,7 @@ class VariableLoad(BaseVisitor,Utils):
 
     def visitMethodDecl(self, ast:MethodDecl, param:tuple[List,ClassSymbol]):
         method_name = ast.name.name
-        if type(ast.kind) == Static:
+        if type(ast.kind) == Static or ast.name.name == '<init>':
             x = MethodSymbol(method_name,param[1].name,[],ast.returnType)
             for i in ast.param:
                 param_i = MemVar(None,None,False)
@@ -398,8 +398,6 @@ class StaticChecker(BaseVisitor,Utils):
     
     
     
-    
-    
     def visitBinaryOp(self, ast, param):
         return None
     
@@ -488,3 +486,10 @@ class StaticChecker(BaseVisitor,Utils):
     def visitId(self, ast:Id, param):
         return ast.name
 
+
+class A {
+    int a ;
+    void foo () {
+        a := 5;
+    } 
+}
