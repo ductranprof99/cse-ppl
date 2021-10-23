@@ -20,15 +20,18 @@ class MemberInClass(ABC):
     def __eq__(self, item_name:str): 
         return item_name == self.name
             
-
 class MemVar(MemberInClass):
     def __init__(self,name:str,type:Type,isConst:bool):
         super().__init__(name)
         self.type = type
         self.isConst = isConst
+    
+    def setNameandType(self,name,typ):
+        self.type = typ
+        self.name = name
 
     def __str__(self):
-        return "instance var: " + self.name 
+        return "instance var: " + self.name + ' type:' + str(self.type)
 
 class BlockEle():
     def __init__(self,listVarInBlock:list[MemVar],isLoop:bool):
@@ -54,16 +57,23 @@ class BlockEle():
                 raise Redeclared(Variable(),var.name)
         self.listVarInBlock.append(var)
         self.theName.append(var.name)
+    
+    def visitBlock(self,listClassName:list[str]):
+        for memvar in self.listVarInBlock:
+            if type(memvar.type) == ClassType and memvar.type.classname.name not in listClassName:
+                raise Undeclared(Class(),memvar.type.classname.name)
+            for i in self.blockChild:
+                i.visitBlock(listClassName)
 
     def __str__(self) -> str:
-        a = '(((((((((((((((block' + ('of loop' if self.isLoop else '') + '))))))))))))))))))\n'
+        a = '(((((((((((((((block' + (' of loop' if self.isLoop else '') + '))))))))))))))))))\n'
         for i in self.listVarInBlock:
-            a += str(i) +'\n'
-        a += '~~~~~~~~~~~~ block child (for, if, nested block) ~~~~~~~~~~~~~~~~~~~~~\n'
+            a += str(i) + '\n'
+        a += '\n\n~~~~~~~~~~~~ block child (for, if, nested block) ~~~~~~~~~~~~~~~~~~~~~\n'
         for i in self.blockChild:
             a += str(i) +'\n'
-        a += '~~~~~~~~~~~~~~~~~~~~~~~~~~ end of nested ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'
-        a += '((((((((((((((((((((((|)))))))))))))))))))))))'
+        a += '~~~~~~~~~~~~~~~~~~~~~~~~~~ end of nested ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n'
+        a += '(((((((((((((((((' + ('end of loop' if self.isLoop else '') + ')))))))))))))))))'
         return a
 
 class MemMethod(MemberInClass):
@@ -101,17 +111,13 @@ class MemMethod(MemberInClass):
         return a
 
 
-
 class Symbol():
-    def __init__(self,elename,eleparent) :
+    def __init__(self,elename:str,eleparent:str) :
         self.name = elename
         self.eleparent = eleparent
     
     def __eq__(self, o: tuple) :
         return (o[0] == self.name) and (o[1] == self.eleparent)
-
-    
-
 
 class VarSymbol(Symbol): 
     '''
@@ -125,14 +131,18 @@ class VarSymbol(Symbol):
     def is_Constant(self):
         return self.isConst
 
+    def setNameandType(self,name,typ):
+        self.name = name
+        self.vartype = typ
+
     def __str__(self):
         return  'global var: {:25s} {:32s}'.format(self.name,self.eleparent)
 
 class MethodSymbol(Symbol): # method type
-    def __init__(self,name:str,parent_name:str,partype:List[MemVar],rettype:Type):
+    def __init__(self,name:str,parent_name:str,params:List[MemVar],return_type:Type):
         super().__init__(name,parent_name)
-        self.params = partype
-        self.return_type = rettype
+        self.params = params
+        self.return_type = return_type
         self.block = BlockEle([],False)
     
     def check(self):
@@ -153,13 +163,13 @@ class MethodSymbol(Symbol): # method type
                     if j.name == i.name:
                         raise Redeclared(Parameter(),i.name)
                 count += 1
+
     def __str__(self):
         a = '-----global method-----\n'
         a += 'global method: {:25s} {:32s} \n'.format(self.name,self.eleparent)
         a += str(self.block) + '\n'
         a += '----------------------'
-        return a
-        
+        return a    
 
 class ClassSymbol(Symbol): 
     '''
@@ -194,6 +204,19 @@ class ClassSymbol(Symbol):
             if name in self.theName['attribute']:
                 raise Redeclared(Attribute(),name)
             self.theName['attribute'].append(name)
+    def checkEleClassType(self,listClsName:list[str]):
+        for memvar in self.listAttribute:
+            if type(memvar.type) == ClassType and memvar.type.classname.name not in listClsName:
+                raise Undeclared(Class(),memvar.type.classname.name)
+        for method in self.listMethod:
+            if type(method.rettype) == ClassType and method.rettype.classname.name not in listClsName:
+                raise Undeclared(Class(),method.rettype.classname.name)
+            for param in method.params:
+                if type(param.type) == ClassType and param.type.classname.name not in listClsName:
+                    raise Undeclared(Class(),param.type.classname.name)
+            method.block.visitBlock(listClsName)
+            
+
 
     def __str__(self):
         a = '============================================ class =======================================\n'
@@ -207,10 +230,8 @@ class ClassSymbol(Symbol):
         a += '==========================================================================================\n'
         return a
 
+
 class UsefulTool():
-    @staticmethod
-    def checkListSymbol(o:List[object]):
-        pass
 
     @staticmethod
     def inspectError(p):
@@ -220,36 +241,73 @@ class UsefulTool():
         for i in range(0,10):
             print('\n')
 
+    @staticmethod
+    def recheckClass(lstSym:List[Symbol]):
+        listClassName = []
+        for i in lstSym:
+            if type(i) == ClassSymbol:
+                listClassName.append(i.name)
+                if UsefulTool.count(lstSym,i.eleparent) == 0 and i.eleparent != None:
+                    raise Undeclared(Class(),i.eleparent)
+                if UsefulTool.count(lstSym,i.name) >= 2:
+                    raise Redeclared(Class(),i.name)
+        for symbol in lstSym:
+            if type(symbol) == VarSymbol:
+                if type(symbol.vartype) == ClassType and symbol.vartype.classname.name not in listClassName:
+                    raise Undeclared(Class(),symbol.vartype.classname.name)
+            if type(symbol) == MethodSymbol:
+                # name:str,parent_name:str,params:List[MemVar],return_type:Type
+                if type(symbol.return_type) == ClassType and symbol.return_type.classname.name not in listClassName:
+                    raise Undeclared(Class(),symbol.return_type.classname.name)
+                for memvar in symbol.params: 
+                    if type(memvar.type) == ClassType and memvar.type.classname.name not in listClassName:
+                        raise Undeclared(Class(),memvar.type.classname.name)
+                symbol.block.visitBlock(listClassName)
+            if type(symbol) == ClassSymbol:
+                symbol.checkEleClassType(listClassName)
+                        
+
+
+    @staticmethod
+    def count(lst:List[Symbol],name):
+        count = 0
+        for i in lst:
+            if type(i) == ClassSymbol and name == i.name:
+                count+=1
+        return count
+
 
 
 
 class VariableLoad(BaseVisitor,Utils):
     # this class for loading variable in ast tree into 
 
-    
- 
     def __init__(self,ast):
         self.ast = ast
         self.global_envi = None
+        self.classCount = 0
+
+
 
     def caculate_glob(self):
-        listIo_method = [MethodSymbol('readInt', 'io', None, IntType()),
+        listIo_method = [MethodSymbol('readInt', 'io', [], IntType()),
                          MethodSymbol('writeInt', 'io', [MemVar('anArg', IntType(), False)], VoidType()),
                          MethodSymbol('writeIntLn', 'io', [MemVar('anArg', IntType(), False)], VoidType()),
-                         MethodSymbol('readFloat', 'io', None, FloatType()),
+                         MethodSymbol('readFloat', 'io',  [], FloatType()),
                          MethodSymbol('writeFloat', 'io', [MemVar('anArg', FloatType(), False)], VoidType()),
                          MethodSymbol('writeFloatLn', 'io', [MemVar('anArg', FloatType(), False)], VoidType()),
-                         MethodSymbol('readBool', 'io', None, BoolType()),
+                         MethodSymbol('readBool', 'io',  [], BoolType()),
                          MethodSymbol('writeBool', 'io', [MemVar('anArg', BoolType(), False)], VoidType()),
                          MethodSymbol('writeBoolLn', 'io', [MemVar('anArg', BoolType(), False)], VoidType()),
-                         MethodSymbol('readStr', 'io', None, StringType()),
+                         MethodSymbol('readStr', 'io',  [], StringType()),
                          MethodSymbol('writeStr', 'io', [MemVar('anArg', StringType(), False)], VoidType()),
                          MethodSymbol('writeStrLn', 'io', [MemVar('anArg', StringType(), False)], VoidType()), ]
         class_io = ClassSymbol(name='io')
         for i in listIo_method:
             class_io.addName(i.name, True)
-        global_envi = listIo_method + [class_io]
-        self.global_envi = global_envi
+        self.global_envi = listIo_method + [class_io]
+        
+
 
     def check(self):
         self.caculate_glob()
@@ -258,6 +316,10 @@ class VariableLoad(BaseVisitor,Utils):
     def visitProgram(self, ast:Program, param:list):
         for i in ast.decl:
             param += [self.visit(i,param)]
+            self.classCount += 1
+        UsefulTool.recheckClass(self.global_envi)
+        
+
     
     
     def visitClassDecl(self, ast:ClassDecl, param:List):
@@ -292,27 +354,24 @@ class VariableLoad(BaseVisitor,Utils):
     
     def visitAttributeDecl(self, ast:AttributeDecl, param:tuple[List,ClassSymbol]):
         if type(ast.kind) == Static:
-            x = VarSymbol(None,param[1].name,None,False)
-            if type(ast.decl) == ConstDecl:
-                x.isConst = True
-            self.visit(ast.decl,x)
+            x = self.visit(ast.decl,param[1].name)
             param[0].append(x)
             param[1].addName(x.name,False)
             
         else:
-            x = MemVar(None,None,False)
-            if type(ast.decl) == ConstDecl:
-                x.isConst = True
-            self.visit(ast.decl,x)
+            x = self.visit(ast.decl,None)
             param[1].add(x)
 
-    def visitVarDecl(self, ast:VarDecl, param):
-        param.name = ast.variable.name
-        param.vartype = ast.varType
 
-    def visitConstDecl(self, ast, param):
-        param.name = ast.variable.name
-        param.vartype = ast.varType
+    def visitVarDecl(self, ast:VarDecl, param):
+        if param:
+            return VarSymbol(name=ast.variable.name,class_name=param,vartype=ast.varType)
+        return MemVar(isConst=False,name=ast.variable.name,type=ast.varType)
+
+    def visitConstDecl(self, ast:ConstDecl, param):
+        if param:
+            return VarSymbol(name=ast.constant.name,class_name=param,vartype=ast.constType,isConst=True)
+        return MemVar(isConst=True,name=ast.constant.name,type=ast.constType)
     
     
     def visitBlock(self, ast:Block, param:tuple[BlockEle,bool]):
@@ -320,10 +379,7 @@ class VariableLoad(BaseVisitor,Utils):
         is_in_loop = param[1]
         param[0].isLoop = is_in_loop
         for i in ast.decl:
-            x = MemVar(None,None,True)
-            if type(i) == VarDecl:
-                x.isConst = False
-            self.visit(i,x)
+            x = self.visit(i,[])
             param[0].addvar(x)
         for i in ast.stmt:
             if type(i) == For and type(i.loop) == Block:
@@ -487,9 +543,3 @@ class StaticChecker(BaseVisitor,Utils):
         return ast.name
 
 
-class A {
-    int a ;
-    void foo () {
-        a := 5;
-    } 
-}
