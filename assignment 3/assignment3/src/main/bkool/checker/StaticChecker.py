@@ -77,11 +77,12 @@ class BlockEle():
         return a
 
 class MemMethod(MemberInClass):
-    def __init__(self,name:str,returnType:Type,listParam:List[MemVar]=None):
+    def __init__(self,name:str,returnType:Type,listParam:List[MemVar]):
         super().__init__(name)
         self.rettype = returnType
         self.params = listParam
         self.block = BlockEle([],False)
+        self.checkParamFirst()
         # list list var decl
 
     def check(self):
@@ -95,13 +96,14 @@ class MemMethod(MemberInClass):
                     raise Redeclared(Variable(),self.block.listVarInBlock[i].name)
 
     def checkParamFirst(self):
-        count = 0
-        if len(self.params) > 2:
-            for i in self.params[:-1:]:
-                for j in self.params[count::]:
-                    if j.name == i.name:
-                        raise Redeclared(Parameter(),i.name)
-                count += 1
+        listName = []
+        for i in self.params:
+            if i.name not in listName:
+                listName.append(i.name)
+            else:
+                raise Redeclared(Parameter(),i.name)
+        
+            
 
     def __str__(self):
         a = '-----method-----'
@@ -144,6 +146,7 @@ class MethodSymbol(Symbol): # method type
         self.params = params
         self.return_type = return_type
         self.block = BlockEle([],False)
+        self.checkParamFirst()
     
     def check(self):
         local = self.params + self.block.listVarInBlock
@@ -156,17 +159,19 @@ class MethodSymbol(Symbol): # method type
                     raise Redeclared(Variable(),self.block.listVarInBlock[i].name)
 
     def checkParamFirst(self):
-        count = 0
-        if len(self.params) > 2:
-            for i in self.params[:-1:]:
-                for j in self.params[count::]:
-                    if j.name == i.name:
-                        raise Redeclared(Parameter(),i.name)
-                count += 1
+        listName = []
+        for i in self.params:
+            if i.name not in listName:
+                listName.append(i.name)
+            else:
+                raise Redeclared(Parameter(),i.name)
+        
 
     def __str__(self):
         a = '-----global method-----\n'
         a += 'global method: {:25s} {:32s} \n'.format(self.name,self.eleparent)
+        for i in self.params:
+            a+= str(i) + '\n'
         a += str(self.block) + '\n'
         a += '----------------------'
         return a    
@@ -256,7 +261,6 @@ class UsefulTool():
                 if type(symbol.vartype) == ClassType and symbol.vartype.classname.name not in listClassName:
                     raise Undeclared(Class(),symbol.vartype.classname.name)
             if type(symbol) == MethodSymbol:
-                # name:str,parent_name:str,params:List[MemVar],return_type:Type
                 if type(symbol.return_type) == ClassType and symbol.return_type.classname.name not in listClassName:
                     raise Undeclared(Class(),symbol.return_type.classname.name)
                 for memvar in symbol.params: 
@@ -265,8 +269,6 @@ class UsefulTool():
                 symbol.block.visitBlock(listClassName)
             if type(symbol) == ClassSymbol:
                 symbol.checkEleClassType(listClassName)
-                        
-
 
     @staticmethod
     def count(lst:List[Symbol],name):
@@ -277,8 +279,6 @@ class UsefulTool():
         return count
 
 
-
-
 class VariableLoad(BaseVisitor,Utils):
     # this class for loading variable in ast tree into 
 
@@ -286,8 +286,6 @@ class VariableLoad(BaseVisitor,Utils):
         self.ast = ast
         self.global_envi = None
         self.classCount = 0
-
-
 
     def caculate_glob(self):
         listIo_method = [MethodSymbol('readInt', 'io', [], IntType()),
@@ -305,9 +303,8 @@ class VariableLoad(BaseVisitor,Utils):
         class_io = ClassSymbol(name='io')
         for i in listIo_method:
             class_io.addName(i.name, True)
-        self.global_envi = listIo_method + [class_io]
-        
-
+        # self.global_envi = listIo_method + [class_io]
+        self.global_envi = []
 
     def check(self):
         self.caculate_glob()
@@ -318,9 +315,6 @@ class VariableLoad(BaseVisitor,Utils):
             param += [self.visit(i,param)]
             self.classCount += 1
         UsefulTool.recheckClass(self.global_envi)
-        
-
-    
     
     def visitClassDecl(self, ast:ClassDecl, param:List):
         current_class = ClassSymbol(ast.classname.name,ast.parentname.name if ast.parentname else None,[],[])
@@ -329,27 +323,20 @@ class VariableLoad(BaseVisitor,Utils):
         return current_class
 
     def visitMethodDecl(self, ast:MethodDecl, param:tuple[List,ClassSymbol]):
+        x = None
         method_name = ast.name.name
+        params = []
+        for eachParam in ast.param:
+            params.append(self.visit(eachParam,None))
         if type(ast.kind) == Static or ast.name.name == '<init>':
-            x = MethodSymbol(method_name,param[1].name,[],ast.returnType)
-            for i in ast.param:
-                param_i = MemVar(None,None,False)
-                self.visit(i,param_i)
-                x.params.append(param_i)
-                x.checkParamFirst()
-            self.visit(ast.body,(x.block,False))
-            x.check()
+            x = MethodSymbol(method_name,param[1].name,params,ast.returnType)
+        else:
+            x = MemMethod(method_name,ast.returnType,params)
+        self.visit(ast.body,(x.block,False))
+        if type(x) == MethodSymbol:
             param[0].append(x)
             param[1].addName(method_name,True)
         else:
-            x = MemMethod(method_name,ast.returnType,[])
-            for i in ast.param:
-                param_i = MemVar(None,None,False)
-                self.visit(i,param_i)
-                x.params.append(param_i)
-                x.checkParamFirst()
-            self.visit(ast.body,(x.block,False))
-            x.check()
             param[1].add(x)
     
     def visitAttributeDecl(self, ast:AttributeDecl, param:tuple[List,ClassSymbol]):
@@ -357,11 +344,9 @@ class VariableLoad(BaseVisitor,Utils):
             x = self.visit(ast.decl,param[1].name)
             param[0].append(x)
             param[1].addName(x.name,False)
-            
         else:
             x = self.visit(ast.decl,None)
             param[1].add(x)
-
 
     def visitVarDecl(self, ast:VarDecl, param):
         if param:
@@ -372,7 +357,6 @@ class VariableLoad(BaseVisitor,Utils):
         if param:
             return VarSymbol(name=ast.constant.name,class_name=param,vartype=ast.constType,isConst=True)
         return MemVar(isConst=True,name=ast.constant.name,type=ast.constType)
-    
     
     def visitBlock(self, ast:Block, param:tuple[BlockEle,bool]):
         # inherit for loop so you need this bitch
@@ -400,7 +384,6 @@ class VariableLoad(BaseVisitor,Utils):
                         self.visit(i.elseStmt,(x2,is_in_loop))
                         param[0].addChildBlock(x2)
     
-    
     def visitFor(self, ast:For, param:tuple[BlockEle,bool]):
         param[0].addvar(MemVar(ast.id.name,IntType(),False))
         self.visit(ast.loop,param)
@@ -411,12 +394,9 @@ class StaticChecker(BaseVisitor,Utils):
     
     global_envi = None
             
-    
     def __init__(self,ast):
         self.ast = ast
 
- 
-    
     def check(self):
         t = VariableLoad(self.ast)
         t.check()
@@ -424,15 +404,15 @@ class StaticChecker(BaseVisitor,Utils):
         return self.visit(self.ast,StaticChecker.global_envi)
 
     def visitProgram(self,ast:Program, c): 
-        for i in c:
-            print(i)
-        return 'a'
+        # c = glob_env + scope [[]]
+        parser = {'global_env': c, 'scope': [[]]}
+        for i in ast.decl:
+            self.visit(i,parser)
 
-   
-    
-    def visitClassDecl(self, ast:ClassDecl, param):
-        pass
-
+    def visitClassDecl(self, ast:ClassDecl, param:dict):
+        listSymbol:list[Symbol] = param['global_env']
+        scope = param['scope']
+        
 
     def visitAttributeDecl(self, ast:AttributeDecl, param:dict):
         pass
@@ -453,7 +433,6 @@ class StaticChecker(BaseVisitor,Utils):
         return None
     
     
-    
     def visitBinaryOp(self, ast, param):
         return None
     
@@ -465,7 +444,6 @@ class StaticChecker(BaseVisitor,Utils):
     
     def visitNewExpr(self, ast, param):
         return None
-    
     
     def visitArrayCell(self, ast, param):
         return None
@@ -497,10 +475,6 @@ class StaticChecker(BaseVisitor,Utils):
     def visitCallStmt(self, ast, param):
         pass 
     
-
-
-
-
     # Visit Literal Values => Return Type of Literal
 
     def visitArrayLiteral(self, ast:ArrayLiteral, param):
@@ -515,7 +489,6 @@ class StaticChecker(BaseVisitor,Utils):
             elif type(type_ele[0]) is not globalType[0]:
                 raise IllegalArrayLiteral(i)
         return globalType, len(ast.value)
-
 
     def visitClassType(self, ast:ClassType, param):
         return ast
@@ -537,7 +510,6 @@ class StaticChecker(BaseVisitor,Utils):
     
     def visitSelfLiteral(self, ast, param):
         return ClassType('<init>'),0
-    
 
     def visitId(self, ast:Id, param):
         return ast.name
