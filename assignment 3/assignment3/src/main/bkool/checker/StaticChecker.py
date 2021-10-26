@@ -6,10 +6,9 @@
 from typing import MutableSequence
 from AST import * 
 from Visitor import *
-from Utils import Utils
 from StaticError import *
 from abc import ABC, abstractmethod, ABCMeta
-
+import copy
 
 
 class MemberInClass(ABC):
@@ -46,6 +45,11 @@ class BlockEle():
         '''
         self.blockChild.append(block_of_method)
 
+    def getVar(self,var:str):
+        for i in self.listVarInBlock:
+            if i.name == var:
+                return i
+
     def addvar(self,var:MemVar):
         '''
         this function has check var name valid in its
@@ -64,16 +68,19 @@ class BlockEle():
                 raise Undeclared(Class(),memvar.type.classname.name)
             for i in self.blockChild:
                 i.visitBlock(listClassName)
+    
+    def getBlockChildNumber(self,number):
+        return self.blockChild[number-1]
 
     def __str__(self) -> str:
         a = '(((((((((((((((block' + (' of loop' if self.isLoop else '') + '))))))))))))))))))\n'
         for i in self.listVarInBlock:
             a += str(i) + '\n'
-        a += '\n\n~~~~~~~~~~~~ block child (for, if, nested block) ~~~~~~~~~~~~~~~~~~~~~\n'
         for i in self.blockChild:
+            a += '\n\n~~~~~~~~~~~~ block child (for, if, nested block) ~~~~~~~~~~~~~~~~~~~~~\n'
             a += str(i) +'\n'
-        a += '~~~~~~~~~~~~~~~~~~~~~~~~~~ end of nested ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n'
-        a += '(((((((((((((((((' + ('end of loop' if self.isLoop else '') + ')))))))))))))))))'
+            a += '~~~~~~~~~~~~~~~~~~~~~~~~~~ end of nested ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n'
+        a += '((((((((((((((end block' + (' of loop' if self.isLoop else '') + ')))))))))))))))'
         return a
 
 class MemMethod(MemberInClass):
@@ -106,10 +113,11 @@ class MemMethod(MemberInClass):
             
 
     def __str__(self):
-        a = '-----method-----'
+        a = '-------------------method------------------\n'
         a += 'instance method: {:25s} \n'.format(self.name)
+        a +='-------------------------------------------\n'
         a += str(self.block) + '\n'
-        a +='----------------'
+        a +='-------------------------------------------\n'
         return a
 
 
@@ -144,7 +152,7 @@ class MethodSymbol(Symbol): # method type
     def __init__(self,name:str,parent_name:str,params:List[MemVar],return_type:Type):
         super().__init__(name,parent_name)
         self.params = params
-        self.return_type = return_type
+        self.rettype = return_type
         self.block = BlockEle([],False)
         self.checkParamFirst()
     
@@ -165,15 +173,17 @@ class MethodSymbol(Symbol): # method type
                 listName.append(i.name)
             else:
                 raise Redeclared(Parameter(),i.name)
+    
         
 
     def __str__(self):
-        a = '-----global method-----\n'
-        a += 'global method: {:25s} {:32s} \n'.format(self.name,self.eleparent)
+        a = '==========================global method===========================\n'
+        a += 'global method: {:25s} ||    class : {:32s} \n'.format(self.name,self.eleparent)
+        a += '=================================================================\n'
         for i in self.params:
             a+= str(i) + '\n'
         a += str(self.block) + '\n'
-        a += '----------------------'
+        a += '=================================================================\n'
         return a    
 
 class ClassSymbol(Symbol): 
@@ -261,8 +271,8 @@ class UsefulTool():
                 if type(symbol.vartype) == ClassType and symbol.vartype.classname.name not in listClassName:
                     raise Undeclared(Class(),symbol.vartype.classname.name)
             if type(symbol) == MethodSymbol:
-                if type(symbol.return_type) == ClassType and symbol.return_type.classname.name not in listClassName:
-                    raise Undeclared(Class(),symbol.return_type.classname.name)
+                if type(symbol.rettype) == ClassType and symbol.rettype.classname.name not in listClassName:
+                    raise Undeclared(Class(),symbol.rettype.classname.name)
                 for memvar in symbol.params: 
                     if type(memvar.type) == ClassType and memvar.type.classname.name not in listClassName:
                         raise Undeclared(Class(),memvar.type.classname.name)
@@ -278,14 +288,77 @@ class UsefulTool():
                 count+=1
         return count
 
+    @staticmethod
+    def findfather(lst:List[ClassSymbol],name):
+        for i in lst:
+            if i.name == name:
+                return i
+    @staticmethod
+    def construcHierrachy(startNode:ClassSymbol,lst:List[ClassSymbol],glob_env:List[Symbol]): 
+        # this method need lst is list of class symbol
+        construct = True
+        result = {'attribute': startNode.listAttribute, 'method': startNode.listMethod, 'father':[startNode.name]}
+        currrent_name:list[str] = startNode.theName['attribute'] + startNode.theName['method'] 
+        current_node = startNode
+        while(construct):
+            if (current_node.eleparent == None) or (current_node.eleparent == startNode.name): 
+                construct = False
+            else:
+                current_node = UsefulTool.findfather(lst,current_node.eleparent)
+                result['father'].append(current_node.name)
+                for i in current_node.listAttribute:
+                    if i.name not in currrent_name:
+                        currrent_name.append(i.name)
+                        if type(i) == MemVar:
+                            result['attribute'].append(i)
+                        else: result['method'].append(i)
+                for i in glob_env:
+                    if (i.name not in currrent_name)  and (i.eleparent == current_node.name) and (type(i) != ClassSymbol):
+                        x = copy.deepcopy(i)
+                        x.eleparent = startNode.name
+                        glob_env.append(x)
+                        currrent_name.append(i.name)
+        return result
+    @staticmethod
+    def getMethod(classDict:dict,method:str):
+        for i in classDict['method']:
+            if i.name == method:
+                return i
+    
+    @staticmethod
+    def validConvertType(lhs,rhs,classDict):
+        if (type(lhs) in [BoolType,IntType]) and (type(lhs) in [BoolType,IntType]):
+            if (type(rhs) != type(lhs)):
+                return False
+            return True
+        if (type(lhs) == FloatType) and (type(rhs) not in [IntType,FloatType]):
+            return False
+        if type(lhs) == ClassType:
+            if type(rhs) != ClassType:
+                return False
+            if rhs.classname.name not in classDict[lhs.classname.name]['father']:
+                return False
+        if (type(lhs) == ArrayType):
+            if type(rhs) != ArrayType:
+                return False
+            if lhs.size != rhs.size:
+                return False
+            if lhs.eleType != rhs.eleType:
+                return False
+        return True
+        
 
-class VariableLoad(BaseVisitor,Utils):
+
+            
+
+class VariableLoad(BaseVisitor):
     # this class for loading variable in ast tree into 
 
     def __init__(self,ast):
         self.ast = ast
-        self.global_envi = None
+        self.global_envi = []
         self.classCount = 0
+        self.classDictionary = {}
 
     def caculate_glob(self):
         listIo_method = [MethodSymbol('readInt', 'io', [], IntType()),
@@ -303,8 +376,7 @@ class VariableLoad(BaseVisitor,Utils):
         class_io = ClassSymbol(name='io')
         for i in listIo_method:
             class_io.addName(i.name, True)
-        # self.global_envi = listIo_method + [class_io]
-        self.global_envi = []
+        # self.global_envi += (listIo_method + [class_io])
 
     def check(self):
         self.caculate_glob()
@@ -315,6 +387,12 @@ class VariableLoad(BaseVisitor,Utils):
             param += [self.visit(i,param)]
             self.classCount += 1
         UsefulTool.recheckClass(self.global_envi)
+        lst = []
+        for i in param:
+            if type(i) == ClassSymbol:
+                lst.append(i)
+        for i in lst:
+            self.classDictionary[i.name] = UsefulTool.construcHierrachy(i,lst,param)
     
     def visitClassDecl(self, ast:ClassDecl, param:List):
         current_class = ClassSymbol(ast.classname.name,ast.parentname.name if ast.parentname else None,[],[])
@@ -328,7 +406,7 @@ class VariableLoad(BaseVisitor,Utils):
         params = []
         for eachParam in ast.param:
             params.append(self.visit(eachParam,None))
-        if type(ast.kind) == Static or ast.name.name == '<init>':
+        if type(ast.kind) == Static:
             x = MethodSymbol(method_name,param[1].name,params,ast.returnType)
         else:
             x = MemMethod(method_name,ast.returnType,params)
@@ -366,7 +444,7 @@ class VariableLoad(BaseVisitor,Utils):
             x = self.visit(i,[])
             param[0].addvar(x)
         for i in ast.stmt:
-            if type(i) == For and type(i.loop) == Block:
+            if type(i) == For:
                 x = BlockEle([],True)
                 self.visit(i,(x,True))
                 param[0].addChildBlock(x)        
@@ -375,14 +453,13 @@ class VariableLoad(BaseVisitor,Utils):
                 self.visit(i,(x,is_in_loop))
                 param[0].addChildBlock(x)   
             elif type(i) == If:
-                if type(i.thenStmt) == Block:
-                    x = BlockEle([],False)
-                    self.visit(i.thenStmt,(x,is_in_loop))
-                    param[0].addChildBlock(x)   
-                    if  type(i.elseStmt) == Block: 
-                        x2 = BlockEle([],False)
-                        self.visit(i.elseStmt,(x2,is_in_loop))
-                        param[0].addChildBlock(x2)
+                x = BlockEle([],False)
+                self.visit(i.thenStmt,(x,is_in_loop))
+                param[0].addChildBlock(x)   
+                if  type(i.elseStmt) != None: 
+                    x2 = BlockEle([],False)
+                    self.visit(i.elseStmt,(x2,is_in_loop))
+                    param[0].addChildBlock(x2)
     
     def visitFor(self, ast:For, param:tuple[BlockEle,bool]):
         param[0].addvar(MemVar(ast.id.name,IntType(),False))
@@ -390,9 +467,12 @@ class VariableLoad(BaseVisitor,Utils):
 
     
 
-class StaticChecker(BaseVisitor,Utils):
+class StaticChecker(BaseVisitor):
     
-    global_envi = None
+    global_class:List[ClassSymbol] = []
+    global_att:List[VarSymbol] = []
+    global_method:List[MethodSymbol] = []
+    classDictionary:dict[str,dict] = None
             
     def __init__(self,ast):
         self.ast = ast
@@ -400,47 +480,339 @@ class StaticChecker(BaseVisitor,Utils):
     def check(self):
         t = VariableLoad(self.ast)
         t.check()
-        StaticChecker.global_envi = t.global_envi
-        return self.visit(self.ast,StaticChecker.global_envi)
+        for i in t.global_envi:
+            if type(i) == ClassSymbol:
+                StaticChecker.global_class.append(i)
+            elif type(i) == MethodSymbol:
+                StaticChecker.global_method.append(i)
+            else:
+                StaticChecker.global_att.append(i)
+        StaticChecker.classDictionary = t.classDictionary
+        return self.visit(self.ast,[])
 
-    def visitProgram(self,ast:Program, c): 
+    def visitProgram(self,ast:Program, glob_env): 
         # c = glob_env + scope [[]]
-        parser = {'global_env': c, 'scope': [[]]}
         for i in ast.decl:
-            self.visit(i,parser)
+            self.visit(i,[])
+        return 'a'
+                        
+    def visitClassDecl(self, ast:ClassDecl, param:list):
+        for i in ast.memlist:
+            if type(i) == AttributeDecl:
+                self.visit(i,ast.classname.name)
+            else: self.visit(i,ast.classname.name)
 
-    def visitClassDecl(self, ast:ClassDecl, param:dict):
-        listSymbol:list[Symbol] = param['global_env']
-        scope = param['scope']
+    def visitAttributeDecl(self, ast:AttributeDecl, classname):
+        # vi la attribute nen param duoc truyen vao la rong (tam nay k phai local dau bro, phai la this.x)
+        if type(ast.decl) == ConstDecl:
+            decl:ConstDecl = ast.decl
+            typeVar = type(decl.constType)
+            if (typeVar == VoidType):
+                raise TypeMismatchInConstant(decl)
+            if decl.value == None:
+                raise IllegalConstantExpression(None)
+            new_order = {'local_id':[],'scope': Class,'type':Constant,'value':decl,'this':classname}
+            rhs = self.visit(decl.value,new_order)
+            if not UsefulTool.validConvertType(typeVar,rhs,StaticChecker.classDictionary):
+                raise TypeMismatchInConstant(decl)
+            # if ((typeVar == IntType) and type(x) != IntType) or ((typeVar == BoolType) and type(x) != BoolType):
+            #     raise TypeMismatchInConstant(decl)
+            # elif (typeVar == FloatType) and type(x) not in [IntType,FloatType]:
+            #     raise TypeMismatchInConstant(decl)
+            # elif (typeVar == ClassType) and (typeVar.classname.name != x.classname.name):
+            #         raise TypeMismatchInConstant(decl)
+            # elif ((typeVar == ArrayType) and type(x) != ArrayType):
+            #     raise TypeMismatchInConstant(decl)
+            # elif ((typeVar == ArrayType) and type(x) == ArrayType):
+            #     if type(typeVar.eleType) != type(x.eletype):
+            #         raise TypeMismatchInConstant(ast)
+        else:
+            new_order = {'local_id':[],'scope': Class,'type':Attribute,'value':ast.decl,'this':classname}
+            if ast.decl.varInit: self.visit(ast.decl.varInit,new_order)
+    
+    def visitMethodDecl(self, ast:MethodDecl, classname):
+        suspect = None
+        if type(ast.kind) == Static:
+            for i in StaticChecker.global_method:
+                if (i.name == ast.name.name) and (i.eleparent == classname):
+                    suspect:MethodSymbol = i
+                    break
+            new_order = {'local_id':[suspect.params],'scope':Method,'type':Method,'value':suspect,'this':classname}
+            self.visit(ast.body,new_order)
+        elif type(ast.kind) == Instance:
+            dictOfClass = StaticChecker.classDictionary[classname]
+            for i in dictOfClass['method']:
+                if(i.name == ast.name.name):
+                    suspect:MemMethod = i
+                    break
+            if suspect == None:
+                UsefulTool.inspectError(ast)
+            new_order = {'local_id':[suspect.params],'scope':Method,'type':Method,'value':suspect,'this':classname}
+            self.visit(ast.body,new_order)
+    
+    def visitBlock(self, ast:Block, param):
+        if param['type'] == Method:
+            current_scope:List[List[MemVar]] = copy.deepcopy(param['local_id'])
+            block:BlockEle = param['value'].block
+            method = param['value']
+            for i in ast.decl:
+                if type(i) == VarDecl:
+                    new_order = {'local_id':current_scope,'scope':param['scope'],'type':Variable,'value':i,'this':param['this']}
+                    self.visit(i,new_order)
+                    current_scope[0].append(block.getVar(i.variable.name))
+                elif type(i) == ConstDecl:
+                    new_order = {'local_id':current_scope,'scope':param['scope'],'type':Constant,'value':i,'this':param['this']}
+                    self.visit(i,new_order)
+                    current_scope[0].append(block.getVar(i.constant.name))
+            count = 0
+            for i in ast.stmt:
+                if type(i) == Assign:
+                    self.visit(i, {'local_id':[block.listVarInBlock],'this':param['this']})
+                elif type(i) in [Break,Continue]:
+                    raise MustInLoop(i)
+                elif type(i) == Return:
+                    self.visit(i,{'local_id':[block.listVarInBlock],'this':param['this'],'method':method})
+                elif type(i) == Block:
+                    count+= 1
+                    new_order = {'local_id':[block.listVarInBlock],'scope':Block,'type':Block,'value':block.getBlockChildNumber(count),'this':param['this'],'method':method}
+                    self.visit(i,new_order)
+                elif type(i) == For:
+                    change = False
+                    if type(i.loop) == Block:
+                        change = True
+                        count+=1
+                    new_order = {'local_id':[block.listVarInBlock],'scope':Block,'type':Block,'value':block.getBlockChildNumber(count) if change else block,'this':param['this'],'method':method}
+                    expr1 = self.visit(i.expr1,new_order)
+                    expr2 = self.visit(i.expr2,new_order)
+                    if (type(expr1) != IntType) or (type(expr2) != IntType):
+                        raise TypeMismatchInStatement(i)
+                    self.visit(i,new_order)
+                elif type(i) == If:
+                    new_order = {'local_id':[block.listVarInBlock],'scope':Block,'type':Block,'value':block, 'this':param['this'],'method':method}
+                    expr = self.visit(i.expr,new_order)
+                    if type(expr) != BoolType:
+                        raise TypeMismatchInStatement(i)
+                    count+=1
+                    new_order['value'] = block.getBlockChildNumber(count)
+                    self.visit(i.thenStmt,new_order)
+                    if i.elseStmt != None:
+                        count+=1
+                        new_order['value'] = block.getBlockChildNumber(count)
+                        self.visit(i.elseStmt,new_order)
+                elif type(i) == CallStmt:
+                    new_order = {'local_id':[block.listVarInBlock],'this':param['this']}
+                    self.visit(i,new_order)
+        elif param['type'] == Block:
+            current_scope:List[List[MemVar]] = [[]] + param['local_id']
+            block:BlockEle = param['value']
+            method =  param['method']
+            for i in ast.decl:
+                if type(i) == VarDecl:
+                    current_scope[0].append(block.getVar(i.variable.name))
+                elif type(i) == ConstDecl:
+                    new_order = {'local_id':current_scope,'scope':Block,'type':Constant,'this':param['this']}
+                    self.visit(i,new_order)
+                    current_scope[0].append(block.getVar(i.constant.name))
+            count = 0
+            for i in ast.stmt:
+                if type(i) == Assign:
+                    self.visit(i, {'local_id':current_scope,'this':param['this']})
+                elif type(i) in [Break,Continue] and not block.isLoop:
+                    raise MustInLoop(i)
+                elif type(i) == Return:
+                    self.visit(i,{'local_id':current_scope,'this':param['this'],'method':method})
+                elif type(i) == Block:
+                    count+= 1
+                    new_order = {'local_id':current_scope,'scope':Block,'type':Block,'value':block.getBlockChildNumber(count),'this':param['this'],'method':method}
+                    self.visit(i,new_order)
+                elif type(i) == For:
+                    count+=1
+                    new_order = {'local_id':current_scope,'scope':Block,'type':Block,'value':block.getBlockChildNumber(count) ,'this':param['this'],'method':method}
+                    expr1 = self.visit(i.expr1,new_order)
+                    expr2 = self.visit(i.expr2,new_order)
+                    if (type(expr1) != IntType) or (type(expr2) != IntType):
+                        raise TypeMismatchInStatement(i)
+                    self.visit(i,new_order)
+                elif type(i) == If:
+                    new_order = {'local_id':current_scope,'scope':Block,'type':Block,'value':block, 'this':param['this'],'method':method}
+                    expr = self.visit(i.expr,new_order)
+                    if type(expr) != BoolType:
+                        raise TypeMismatchInStatement(i)
+                    count+=1
+                    new_order['value'] = block.getBlockChildNumber(count)
+                    self.visit(i.thenStmt,new_order)
+                    if i.elseStmt != None:
+                        count+=1
+                        new_order['value'] = block.getBlockChildNumber(count)
+                        self.visit(i.elseStmt,new_order)
+                elif type(i) == CallStmt:
+                    new_order = {'local_id':current_scope,'this':param['this']}
+                    self.visit(i,new_order)
+
+    def visitConstDecl(self, ast:ConstDecl, param:dict):
+        # param =  {'local_id':current_scope,'scope':param['scope'],'value':ConstDecl,'this':param['this']}
+        # pass xuong duoi cai nay chi con instance declare trong method voi scope
+        # dont add anything to param
+        new_order =  {'local_id':param['local_id'],'scope':param['scope'],'type':Constant,'value':ast,'this':param['this']}
+        typeVar = ast.constType
+        if (typeVar == VoidType):
+                raise TypeMismatchInConstant(ast)
+        if ast.value == None:
+            raise IllegalConstantExpression(None)
+        rhs = self.visit(ast.value,new_order)
+        if not UsefulTool.validConvertType(typeVar,rhs,StaticChecker.classDictionary):
+            raise TypeMismatchInConstant(ast)    
+
+    def visitFor(self, ast:For, param):
+        # param: {'local_id':List[List[Memvar]],'scope':Blocl,'type':Block,'value':block, 'this':param['this'],'method':Method check return : keep it safe}
+        current_scope = [param['value'].listVarInBlock] + param['local_id']
+        new_order = {'local_id':current_scope,'scope':Block,'type':Block,'value':param['value'] ,'this':param['this'],'method':param['method']}
+        self.visit(ast.loop,new_order)
+    
+    
+    def visitReturn(self, ast:Return, param):
+        # param {'local_id':current_scope,'this':param['this'],'method':method})
+        return_type = param['method'].rettype
+        new_order = {'local_id':param['local_id'],'scope':Method,'type':Return,'value':ast,'this':param['this']}
+        x = self.visit(ast.expr,new_order)
+        if type(return_type) != type(x):
+            raise TypeMismatchInStatement(ast)
+    
+    def visitAssign(self, ast:Assign, param):
+        # param {'local_id':current_scope,'this':param['this']}
+        new_order = {'local_id':param['local_id'],'scope':Method,'type':Assign,'value':ast,'this':param['this']}
+        lhs = self.visit(ast.lhs,new_order)
+        rhs = self.visit(ast.exp,new_order)
+        if not UsefulTool.validConvertType(lhs,rhs,StaticChecker.classDictionary):
+            raise TypeMismatchInStatement(ast)
+        
+    
+    def visitCallStmt(self, ast:CallStmt, param):
+        # param {'local_id':current_scope,'this':param['this']}
+        new_order = {'local_id':param['local_id'],'scope':Method,'type':CallStmt,'value':ast,'this':param['this']}
+        if type(ast.obj) == Id:
+            found = None
+            for i in new_order['local_id']:
+                for j in i:
+                    if j.name == ast.obj.name: 
+                        found = j
+                        break
+                if found != None:
+                    if type(found.type) != ClassType:
+                        raise TypeMismatchInStatement(ast)
+                    for classSym in StaticChecker.global_class:
+                        if classSym.name == found.type.classname.name:
+                            if ast.method.name in classSym.theName['method'] and ast.method.name not in StaticChecker.classDictionary[classSym.name]['method']:
+                                raise IllegalMemberAccess(ast)
+                            elif ast.method.name not in classSym.theName['method']:
+                                raise Undeclared(Method(),ast.method.name)
+                            break
+                    method:MemMethod = UsefulTool.getMethod(StaticChecker.classDictionary[classSym.name],ast.method.name)
+                    if type(method.rettype) != VoidType:
+                        raise TypeMismatchInStatement(ast)
+                    if len(method.params) != len(ast.param):
+                        raise TypeMismatchInStatement(ast)
+                    for indexer in range(0,len(ast.param)):
+                        rhs = self.visit(ast.param[indexer],new_order)
+                        if not UsefulTool.validConvertType(method.params[indexer].type,rhs,StaticChecker.classDictionary):
+                            raise TypeMismatchInStatement(ast)
+            if (found == None):
+                if ast.obj.name not in StaticChecker.classDictionary:
+                    raise Undeclared(Identifier(),ast.method.name)
+                else:
+                    if (ast.obj.name,ast.method.name) not in StaticChecker.global_method:
+                        if ast.method.name in StaticChecker.classDictionary[ast.obj.name]['method']:
+                            raise IllegalMemberAccess(ast)
+                        else:
+                            for i in StaticChecker.global_method:
+                                if (i.name == ast.method.name) and (i.eleparent == ast.obj.name):
+                                    i:MethodSymbol
+                                    if type(i.rettype) != VoidType:
+                                        raise TypeMismatchInStatement(ast)
+                                    if len(i.params) != len(ast.param):
+                                        raise TypeMismatchInStatement(ast)
+                                    for indexer in range(0,len(ast.param)):
+                                        rhs = self.visit(ast.param[indexer],new_order)
+                                        if not UsefulTool.validConvertType(i.params[indexer].type,rhs,StaticChecker.classDictionary):
+                                            raise TypeMismatchInStatement(ast)
+                                    break
+                            # check param
+                            
+                    #search for static class
+        else:
+            class_search = self.visit(ast.obj,new_order)
+            if type(class_search) != ClassType:
+                raise TypeMismatchInStatement(ast)
+            for classSym in StaticChecker.global_class:
+                if classSym.name == class_search.classname.name:
+                    if ast.method.name in classSym.theName['method'] and ast.method.name not in StaticChecker.classDictionary[classSym.name]['method']:
+                        raise IllegalMemberAccess(ast)
+                    elif ast.method.name not in classSym.theName['method']:
+                        raise Undeclared(Method(),ast.method.name)
+                    break
+            method:MemMethod = UsefulTool.getMethod(StaticChecker.classDictionary[classSym.name],ast.method.name)
+            if type(method.rettype) != VoidType:
+                raise TypeMismatchInStatement(ast)
+            if len(method.params) != len(ast.param):
+                raise TypeMismatchInStatement(ast)
+            for indexer in range(0,len(ast.param)):
+                rhs = self.visit(ast.param[indexer],new_order)
+                if not UsefulTool.validConvertType(method.params[indexer].type,rhs,StaticChecker.classDictionary):
+                    raise TypeMismatchInStatement(ast)
         
 
-    def visitAttributeDecl(self, ast:AttributeDecl, param:dict):
-        pass
+
+    # From now on, its expression
     
-    def visitStatic(self, ast, param):
-        return
+    def visitBinaryOp(self, ast:BinaryOp, param):
+        leftExp = self.visit(ast.left,param)
+        rightExp = self.visit(ast.right,param)
+        if ast.op in ['&&', '||']:
+            if type(leftExp) != BoolType: 
+                raise TypeMismatchInExpression(ast)
+            if type(rightExp) != BoolType: 
+                raise TypeMismatchInExpression(ast)
+            return BoolType()
+        if ast.op in ['==','!=']:
+            if ((type(leftExp) == BoolType) and (type(rightExp) != BoolType)) or ((type(leftExp) != BoolType) and (type(rightExp) == BoolType)): 
+                raise TypeMismatchInExpression(ast)
+            if ((type(leftExp) == IntType) and (type(rightExp) != IntType)) or ((type(leftExp) != IntType) and (type(rightExp) == IntType)): 
+                raise TypeMismatchInExpression(ast)
+            return BoolType()
+        if ast.op in ['>','<','>=','<=']:
+            if type(leftExp) not in [FloatType,IntType]: 
+                raise TypeMismatchInExpression(ast)
+            if type(rightExp) not in [FloatType,IntType]: 
+                raise TypeMismatchInExpression(ast)
+            return BoolType()
+        if ast.op in ['\\','%']:
+            if type(leftExp) != IntType: 
+                raise TypeMismatchInExpression(ast)
+            if type(rightExp) != IntType: 
+                raise TypeMismatchInExpression(ast)
+            return IntType()
+        if ast.op in ['+','-','*','/']:
+            if (type(leftExp) not in [IntType,FloatType]) or (type(rightExp) not in [IntType,FloatType]):
+                raise TypeMismatchInExpression(ast)
+            if ast.op == '/': return FloatType()
+            if type(leftExp) == type(rightExp):
+                return leftExp
+            return FloatType()
+        if ast.op == '^':
+            if type(leftExp) != StringType: 
+                raise TypeMismatchInExpression(ast)
+            if type(rightExp) != StringType: 
+                raise TypeMismatchInExpression(ast)
+            return StringType()
     
-    def visitInstance(self, ast, param):
-        return 
-    
-    def visitVarDecl(self, ast:VarDecl, param:dict):
-        return 
-    
-    def visitConstDecl(self, ast:ConstDecl, param:dict):
-        return
-    
-    def visitMethodDecl(self, ast:MethodDecl, param:dict):
-        return None
-    
-    
-    def visitBinaryOp(self, ast, param):
-        return None
-    
-    def visitUnaryOp(self, ast, param):
+    def visitUnaryOp(self, ast:UnaryOp, param):
+        exp = self.visit(ast.body,param)
+        if ast.op == '!':
+            pass
         return None
     
     def visitCallExpr(self, ast, c): 
-        pass
+        return None
     
     def visitNewExpr(self, ast, param):
         return None
@@ -451,67 +823,39 @@ class StaticChecker(BaseVisitor,Utils):
     def visitFieldAccess(self, ast, param):
         return None
     
-    def visitBlock(self, ast, param):
-        return None
-    
-    def visitIf(self, ast, param):
-        return None
-    
-    def visitFor(self, ast, param):
-        return None
-    
-    def visitContinue(self, ast, param):
-        return None
-    
-    def visitBreak(self, ast, param):
-        return None
-    
-    def visitReturn(self, ast, param):
-        return None
-    
-    def visitAssign(self, ast, param):
-        return None
-    
-    def visitCallStmt(self, ast, param):
-        pass 
-    
-    # Visit Literal Values => Return Type of Literal
-
-    def visitArrayLiteral(self, ast:ArrayLiteral, param):
-        '''return type and length of array literal'''
-        globalType = self.visit(ast.value[0])
-        for i in ast.value:
-            type_ele = self.visit(i,param)
-            if type(type_ele[0]) is ArrayType:
-                raise IllegalArrayLiteral(i)
-            elif type_ele[1] == 0:
-                raise IllegalArrayLiteral(i)
-            elif type(type_ele[0]) is not globalType[0]:
-                raise IllegalArrayLiteral(i)
-        return globalType, len(ast.value)
-
-    def visitClassType(self, ast:ClassType, param):
-        return ast
-
-    def visitIntLiteral(self, ast, param):
-        return IntType(),1
-    
-    def visitFloatLiteral(self, ast, param):
-        return FloatType(),1
-    
-    def visitBooleanLiteral(self, ast, param):
-        return BoolType(),1
-    
-    def visitStringLiteral(self, ast, param):
-        return StringType(),1
-    
-    def visitNullLiteral(self, ast, param):
-        return VoidType(),-1
-    
-    def visitSelfLiteral(self, ast, param):
-        return ClassType('<init>'),0
-
     def visitId(self, ast:Id, param):
         return ast.name
+
+
+    def visitArrayLiteral(self, ast:ArrayLiteral, param):
+        if type(ast.value[0]) == ArrayLiteral:
+            raise IllegalArrayLiteral(ast)
+        first_ele_type = self.visit(ast.value[0],None)
+        count = 0
+        for i in ast.value:
+            x = self.visit(i,None)
+            if (type(x) != type(first_ele_type)) or (type(i)==ArrayLiteral):
+                raise IllegalArrayLiteral(ast)
+            count+=1
+        return ArrayType(size=count,eleType=first_ele_type)
+
+    def visitIntLiteral(self, ast, param):
+        return IntType()
+    
+    def visitFloatLiteral(self, ast, param):
+        return FloatType()
+    
+    def visitBooleanLiteral(self, ast, param):
+        return BoolType()
+    
+    def visitStringLiteral(self, ast, param):
+        return StringType()
+    
+    def visitNullLiteral(self, ast, param):
+        return VoidType()
+    
+    def visitSelfLiteral(self, ast, className):
+        return ClassType(Id(className))
+
 
 

@@ -3,7 +3,7 @@ from TestUtils import TestChecker
 from AST import *
 
 class CheckerSuite(unittest.TestCase):
-    def test0(self):
+    def test00(self):
         """
         successful test series
         """
@@ -25,7 +25,7 @@ class CheckerSuite(unittest.TestCase):
         # Neu muon check class truoc check param thi sao
         self.assertTrue(TestChecker.test(input_text, expect, 400)) 
 
-    def test1(self):
+    def test01(self):
         """
         successful test series
         """
@@ -69,3 +69,44 @@ class CheckerSuite(unittest.TestCase):
         # Neu muon check class truoc check param thi sao
         self.assertTrue(TestChecker.test(input_text, expect, 415)) 
     
+    def test100(self):
+        """
+        successful test series
+        """
+        input_text = """
+        class Shape {
+            float length,width;
+            float getArea() {
+
+            }
+            Shape(float length,width){
+                this.length := length;
+                this.width := width;
+            }
+        }
+        class Rectangle extends Shape {
+            float getArea(){
+                return this.length*this.width;
+            }
+        }
+        class Triangle extends Shape {
+            float getArea(){
+                return this.length*this.width / 2;
+            }
+        }
+        
+        """
+        expect = ""
+        # Neu muon check class truoc check param thi sao
+        self.assertTrue(TestChecker.test(input_text, expect, 500)) 
+
+    def test101(self):
+        input = """
+            class Ex {
+                final int val = 10 \\ True;
+                final int a = 1 + 2 * 4;
+                int b = 10 + 20 * 30;
+            }
+            """
+        expect = []
+        self.assertTrue(TestChecker.test(input, str(expect), 501))
