@@ -232,7 +232,7 @@ class CheckerSuite(unittest.TestCase):
             }
         }
         """
-        expect = 'Type Mismatch In Expression: BinaryOp(+,Id(d),IntLit(1))'
+        expect = 'Illegal Constant Expression: BinaryOp(+,Id(d),IntLit(1))'
         self.assertTrue(TestChecker.test(input, str(expect), 411))
 
     def test12(self):
@@ -374,4 +374,46 @@ class CheckerSuite(unittest.TestCase):
         expect = """Cannot Assign To Constant: AssignStmt(FieldAccess(Self(),Id(b)),IntLit(5))"""
         self.assertTrue(TestChecker.test(input, str(expect), 420))
     
+    def test21(self):
+        input = """
+        class A {
+            float main() {
+                int a = 5;
+                {
+                    {
+                        for a:=0 to 1 do {
+                            for a:=0 to 1 do {
+                                for a := 0 to 1 do {
+                                    float a;
+                                }
+                                if true then {
+                                    {
+                                        {
+                                            float a = 5;
+                                        }
+                                        return a;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+        expect = """Type Mismatch In Statement: Return(Id(a))"""
+        self.assertTrue(TestChecker.test(input, str(expect), 421))
+
     
+    def test22(self):
+        input = """
+        class A {
+            final int[5] b = {1,2,3,4,5};
+            void main() {
+                int a;
+                final int b = 1+ a; 
+            }
+        }
+        """
+        expect = """Illegal Constant Expression: BinaryOp(+,IntLit(1),Id(a))"""
+        self.assertTrue(TestChecker.test(input, str(expect), 422))
