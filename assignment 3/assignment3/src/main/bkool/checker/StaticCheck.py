@@ -457,8 +457,8 @@ class VariableLoad(BaseVisitor):
             elif type(i) == If:
                 x = BlockEle([],False)
                 self.visit(i.thenStmt,(x,is_in_loop))
-                param[0].addChildBlock(x)   
-                if  type(i.elseStmt) != None: 
+                param[0].addChildBlock(x) 
+                if  i.elseStmt: 
                     x2 = BlockEle([],False)
                     self.visit(i.elseStmt,(x2,is_in_loop))
                     param[0].addChildBlock(x2)
@@ -640,7 +640,8 @@ class StaticChecker(BaseVisitor):
                     self.visit(i,new_order)
 
     def visitVarDecl(self, ast:VarDecl, param):
-        self.visit(ast.varInit,param)
+        if ast.varInit:
+            self.visit(ast.varInit,param)
 
     def visitConstDecl(self, ast:ConstDecl, param:dict):
         # param =  {'local_id':current_scope,'scope':param['scope'],'value':ConstDecl,'this':param['this']}
@@ -883,7 +884,7 @@ class StaticChecker(BaseVisitor):
 
     
     def visitNewExpr(self, ast:NewExpr, param:dict):
-        if not StaticChecker.classDictionary[ast.classname.name]:
+        if ast.classname.name not in StaticChecker.classDictionary:
             raise Undeclared(Class(),ast.classname.name)
         method = None
         for i in StaticChecker.classDictionary[ast.classname.name]['method']:
@@ -941,13 +942,10 @@ class StaticChecker(BaseVisitor):
                 raise IllegalConstantExpression(ast)
         return var.type
 
-
-            
-        
     def visitId(self, ast:Id, param):
         # param {'local_id':[[],[]],'scope': sumthing ,'type':Sumthing,'value':ast,'this':param['this']}
         if param['scope'] == Class:
-            if StaticChecker.classDictionary[ast.name]:
+            if ast.name in StaticChecker.classDictionary:
                 return ClassType(ast)
             raise Undeclared(Identifier(),ast.name)
         for i in param['local_id']:
@@ -955,8 +953,9 @@ class StaticChecker(BaseVisitor):
                 j:MemVar
                 if j.name == ast.name:
                     return j.type
-        if StaticChecker.classDictionary[ast.name]:
-                return ClassType(ast)
+        UsefulTool.inspectError(ast.name)
+        if ast.name in StaticChecker.classDictionary:
+            return ClassType(ast)
         raise Undeclared(Identifier(),ast.name)
 
 

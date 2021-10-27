@@ -140,46 +140,67 @@ class CheckerSuite(unittest.TestCase):
     #     """
     #     expect = 'Type Mismatch In Expression: BinaryOp(\,IntLit(10),BooleanLit(True))'
     #     self.assertTrue(TestChecker.test(input, str(expect), 407))
-    def test08(self):
-        input = """
-        class Ex extends Ey{
-        int a = 10 + 20;
-        Ey classY = new Ey();
-        static int c = 100;
-        void foo () {
-            Ey classEY = new Ey();
-            int value = this.classY.classC.a;
-        }
-    }
-    class Ey {
-        float a = 10.0;
-        Ec classC = new Ec();
-        static int b = 10;
-        static void foo () {
+    # def test08(self):
+    #     input = """
+    #     class Ex extends Ey{
+    #     int a = 10 + 20;
+    #     Ey classY = new Ey();
+    #     static int c = 100;
+    #     void foo () {
+    #         Ey classEY = new Ey();
+    #         int value = this.classY.classC.a;
+    #     }
+    # }
+    # class Ey {
+    #     float a = 10.0;
+    #     Ec classC = new Ec();
+    #     static int b = 10;
+    #     static void foo () {
             
-        }
-    }
-    class Ec {
-        float a = 10.0;
-    }
-        """
-        expect = ''
-        self.assertTrue(TestChecker.test(input, str(expect), 408))
+    #     }
+    # }
+    # class Ec {
+    #     float a = 10.0;
+    # }
+    #     """
+    #     expect = ''
+    #     self.assertTrue(TestChecker.test(input, str(expect), 408))
 
-    def test09(self):
+    # def test09(self):
+    #     input = """
+    #     class Ex extends Ey{
+    #     static Ey classY = new Ey();
+    #     void foo () {
+    #         int value = Ex.classC.a;
+    #     }
+    # }
+    # class Ey {
+    #     static Ec classC = new Ec();
+    # }
+    # class Ec {
+    #     static float a = 10.0;
+    # }
+    #     """
+    #     expect = ''
+    #     self.assertTrue(TestChecker.test(input, str(expect), 409))
+
+    def test10(self):
         input = """
-        class Ex extends Ey{
-        static Ey classY = new Ey();
+        class A {
+        int a = 90;
         void foo () {
-            int value = Ex.classC.a;
+            int b = 100;
+            if (this.a > b) then {
+                int c;
+                if (this.a > c) then {
+                    int d = c + b;
+                }
+            }
+            if (c > b) then {
+                
+            }
         }
-    }
-    class Ey {
-        static Ec classC = new Ec();
-    }
-    class Ec {
-        static float a = 10.0;
     }
         """
         expect = ''
-        self.assertTrue(TestChecker.test(input, str(expect), 409))
+        self.assertTrue(TestChecker.test(input, str(expect), 410))
