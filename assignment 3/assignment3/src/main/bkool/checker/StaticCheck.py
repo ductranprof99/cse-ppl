@@ -14,15 +14,15 @@ class NoneType:
     pass
 
 class MemberInClass(ABC):
-    def __init__(self,name:str):
+    def __init__(self,name):
         self.name = name
 
     # check id in the membertype list
-    def __eq__(self, item_name:str): 
+    def __eq__(self, item_name): 
         return item_name == self.name
             
 class MemVar(MemberInClass):
-    def __init__(self,name:str,type:Type,isConst:bool):
+    def __init__(self,name:str,type,isConst):
         super().__init__(name)
         self.type = type
         self.isConst = isConst
@@ -35,7 +35,7 @@ class MemVar(MemberInClass):
         return "instance var: " + self.name + ' type:' + str(self.type)
 
 class BlockEle():
-    def __init__(self,listVarInBlock:list[MemVar],isLoop:bool):
+    def __init__(self,listVarInBlock,isLoop):
         self.listVarInBlock = listVarInBlock
         self.isLoop = isLoop
         self.blockChild = []
@@ -47,7 +47,7 @@ class BlockEle():
         '''
         self.blockChild.append(block_of_method)
 
-    def getVar(self,var:str):
+    def getVar(self,var):
         for i in self.listVarInBlock:
             if i.name == var:
                 return i
@@ -64,7 +64,7 @@ class BlockEle():
         self.listVarInBlock.append(var)
         self.theName.append(var.name)
     
-    def visitBlock(self,listClassName:list[str]):
+    def visitBlock(self,listClassName):
         for memvar in self.listVarInBlock:
             if type(memvar.type) == ClassType and memvar.type.classname.name not in listClassName:
                 raise Undeclared(Class(),memvar.type.classname.name)
@@ -86,7 +86,7 @@ class BlockEle():
         return a
 
 class MemMethod(MemberInClass):
-    def __init__(self,name:str,returnType:Type,listParam:List[MemVar]):
+    def __init__(self,name,returnType,listParam):
         super().__init__(name)
         self.rettype = returnType
         self.params = listParam
@@ -124,7 +124,7 @@ class MemMethod(MemberInClass):
 
 
 class Symbol():
-    def __init__(self,elename:str,eleparent:str) :
+    def __init__(self,elename,eleparent) :
         self.name = elename
         self.eleparent = eleparent
     
@@ -135,7 +135,7 @@ class VarSymbol(Symbol):
     '''
     ### global attribute represent 
     '''
-    def __init__(self,name:str,class_name:str,vartype:Type,isConst:bool=False):
+    def __init__(self,name:str,class_name,vartype,isConst=False):
         super().__init__(name,class_name)
         self.type = vartype
         self.isConst = isConst
@@ -151,7 +151,7 @@ class VarSymbol(Symbol):
         return  'global var: {:25s} {:32s}'.format(self.name,self.eleparent)
 
 class MethodSymbol(Symbol): # method type
-    def __init__(self,name:str,parent_name:str,params:List[MemVar],return_type:Type):
+    def __init__(self,name,parent_name,params,return_type):
         super().__init__(name,parent_name)
         self.params = params
         self.rettype = return_type
@@ -192,7 +192,7 @@ class ClassSymbol(Symbol):
     '''
     class type, contain instance attribute, instance method and whole bunch of shit
     '''
-    def __init__(self,name:str,parent:str=None,attributeList:List[MemVar]=[],methodlist:List[MemMethod]=[]):
+    def __init__(self,name:str,parent:str=None,attributeList=[],methodlist=[]):
         super().__init__(name,parent)
         self.listAttribute = attributeList 
         self.listMethod = methodlist
@@ -221,7 +221,7 @@ class ClassSymbol(Symbol):
             if name in self.theName['attribute']:
                 raise Redeclared(Attribute(),name)
             self.theName['attribute'].append(name)
-    def checkEleClassType(self,listClsName:list[str]):
+    def checkEleClassType(self,listClsName):
         for memvar in self.listAttribute:
             if type(memvar.type) == ClassType and memvar.type.classname.name not in listClsName:
                 raise Undeclared(Class(),memvar.type.classname.name)
@@ -259,7 +259,7 @@ class UsefulTool():
             print('\n')
 
     @staticmethod
-    def recheckClass(lstSym:List[Symbol]):
+    def recheckClass(lstSym):
         listClassName = []
         for i in lstSym:
             if type(i) == ClassSymbol:
@@ -283,7 +283,7 @@ class UsefulTool():
                 symbol.checkEleClassType(listClassName)
 
     @staticmethod
-    def count(lst:List[Symbol],name):
+    def count(lst,name):
         count = 0
         for i in lst:
             if type(i) == ClassSymbol and name == i.name:
@@ -291,12 +291,12 @@ class UsefulTool():
         return count
 
     @staticmethod
-    def findfather(lst:List[ClassSymbol],name):
+    def findfather(lst,name):
         for i in lst:
             if i.name == name:
                 return i
     @staticmethod
-    def construcHierrachy(startNode:ClassSymbol,lst:List[ClassSymbol],glob_env:List[Symbol]): 
+    def construcHierrachy(startNode,lst,glob_env): 
         # this method need lst is list of class symbol
         construct = True
         result = {'attribute': startNode.listAttribute, 'method': startNode.listMethod, 'father':['nil',startNode.name]}
@@ -322,7 +322,7 @@ class UsefulTool():
                         currrent_name.append(i.name)
         return result
     @staticmethod
-    def getMethod(classDict:dict,method:str):
+    def getMethod(classDict,method):
         for i in classDict['method']:
             if i.name == method:
                 return i
@@ -396,13 +396,13 @@ class VariableLoad(BaseVisitor):
         for i in lst:
             self.classDictionary[i.name] = UsefulTool.construcHierrachy(i,lst,param)
     
-    def visitClassDecl(self, ast:ClassDecl, param:List):
+    def visitClassDecl(self, ast:ClassDecl, param):
         current_class = ClassSymbol(ast.classname.name,ast.parentname.name if ast.parentname else None,[],[])
         for i in ast.memlist:
             self.visit(i,(param,current_class))
         return current_class
 
-    def visitMethodDecl(self, ast:MethodDecl, param:tuple[List,ClassSymbol]):
+    def visitMethodDecl(self, ast:MethodDecl, param):
         x = None
         method_name = ast.name.name
         params = []
@@ -419,7 +419,7 @@ class VariableLoad(BaseVisitor):
         else:
             param[1].add(x)
     
-    def visitAttributeDecl(self, ast:AttributeDecl, param:tuple[List,ClassSymbol]):
+    def visitAttributeDecl(self, ast:AttributeDecl, param):
         if type(ast.kind) == Static:
             x = self.visit(ast.decl,param[1].name)
             param[0].append(x)

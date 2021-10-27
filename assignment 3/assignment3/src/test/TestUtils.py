@@ -2,7 +2,7 @@ import sys,os
 from antlr4 import *
 from antlr4.error.ErrorListener import ConsoleErrorListener,ErrorListener
 
-from StaticChecker import StaticChecker
+from StaticCheck import StaticChecker
 from StaticError import StaticError
 if not './main/bkool/parser/' in sys.path:
     sys.path.append('./main/bkool/parser/')
