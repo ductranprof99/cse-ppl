@@ -2691,3 +2691,25 @@ class ASTGenSuite(unittest.TestCase):
         expect = "successful"
         # Neu muon check class truoc check param thi sao
         self.assertTrue(TestAST.test(input_text, expect, 300))
+
+    def test12(self):
+        input = """
+        class A {
+            final float value = 10;
+        }
+        class B extends A {
+            A classA_global = new A();
+            void foo(int a) {
+                int b = 1;
+                A classA = new A();
+                if (b > this.value) then {
+                    int i = 0;
+                    for i := 1 to this.value do {
+                        int c = this.classA_global;
+                    }
+                }
+            }
+        }
+        """
+        expect = ''
+        self.assertTrue(TestAST.test(input, str(expect), 312))

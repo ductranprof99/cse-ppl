@@ -496,7 +496,7 @@ class StaticChecker(BaseVisitor):
         # c = glob_env + scope [[]]
         for i in ast.decl:
             self.visit(i,[])
-        return ast.decl
+        return ['Valid']
                         
     def visitClassDecl(self, ast:ClassDecl, param:list):
         for i in ast.memlist:
@@ -675,8 +675,9 @@ class StaticChecker(BaseVisitor):
     def visitAssign(self, ast:Assign, param):
         # param {'local_id':current_scope,'this':param['this']}
         new_order = {'local_id':param['local_id'],'scope':Method,'type':Assign,'value':ast,'this':param['this']}
-        lhs = self.visit(ast.lhs,new_order)
         rhs = self.visit(ast.exp,new_order)
+        lhs = self.visit(ast.lhs,new_order)
+
         if not UsefulTool.validConvertType(lhs,rhs,StaticChecker.classDictionary):
             raise TypeMismatchInStatement(ast)
         
@@ -940,6 +941,8 @@ class StaticChecker(BaseVisitor):
             # param['value'] will be ast: Consdecl
             if not var.isConst:
                 raise IllegalConstantExpression(ast)
+        if var.isConst and (param['type'] == Assign):
+            raise CannotAssignToConstant(param['value'])
         return var.type
 
     def visitId(self, ast:Id, param):
@@ -952,6 +955,8 @@ class StaticChecker(BaseVisitor):
             for j in i:
                 j:MemVar
                 if j.name == ast.name:
+                    if j.isConst and (param['type'] == Assign):
+                        raise CannotAssignToConstant(param['value'])
                     return j.type
         UsefulTool.inspectError(ast.name)
         if ast.name in StaticChecker.classDictionary:
