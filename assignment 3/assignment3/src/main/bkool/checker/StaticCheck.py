@@ -438,7 +438,7 @@ class VariableLoad(BaseVisitor):
             return VarSymbol(name=ast.constant.name,class_name=param,type=ast.constType,isConst=True)
         return MemVar(isConst=True,name=ast.constant.name,type=ast.constType)
     
-    def visitBlock(self, ast:Block, param:tuple[BlockEle,bool]):
+    def visitBlock(self, ast:Block, param):
         # inherit for loop so you need this bitch
         is_in_loop = param[1]
         param[0].isLoop = is_in_loop
@@ -463,7 +463,7 @@ class VariableLoad(BaseVisitor):
                     self.visit(i.elseStmt,(x2,is_in_loop))
                     param[0].addChildBlock(x2)
     
-    def visitFor(self, ast:For, param:tuple[BlockEle,bool]):
+    def visitFor(self, ast:For, param):
         param[0].addvar(MemVar(ast.id.name,IntType(),False))
         self.visit(ast.loop,param)
 
@@ -471,10 +471,10 @@ class VariableLoad(BaseVisitor):
 
 class StaticChecker(BaseVisitor):
     
-    global_class:List[ClassSymbol] = []
-    global_att:List[VarSymbol] = []
-    global_method:List[MethodSymbol] = []
-    classDictionary:dict[str,dict] = {'nil': {'father':[],'method':[],'attribute':[]}}
+    global_class = []
+    global_att = []
+    global_method = []
+    classDictionary = {'nil': {'father':[],'method':[],'attribute':[]}}
             
     def __init__(self,ast):
         self.ast = ast
@@ -808,7 +808,7 @@ class StaticChecker(BaseVisitor):
     def visitCallExpr(self, ast:CallExpr, param): 
         # param {'local_id':[[],[]],'scope': sumthing ,'type':Sumthing,'value':ast,'this':param['this']}
         if param['type'] == Constant:
-            raise TypeMismatchInConstant(param['value'])
+            raise IllegalConstantExpression(ast)
         if param['type'] == Attribute:
             if type(ast.obj) == Id:
                 if ast.obj.name not in StaticChecker.classDictionary:
@@ -924,20 +924,19 @@ class StaticChecker(BaseVisitor):
                 if i.name == ast.fieldname.name:
                     var = i
                     break
-            
         else:
             if ast.fieldname.name in class_dict['attribute']:
                 raise IllegalMemberAccess(ast)
             for i in StaticChecker.global_att:
-                if (i.name == ast.fieldname) and (i.eleparent == obj_type.classname.name):
+                if (i.name == ast.fieldname.name) and (i.eleparent == obj_type.classname.name):
                     var = i
                     break
-        if var == None:
+        if not var:
             raise Undeclared(Attribute(),ast.fieldname.name)
         if param['type'] == Constant:
             # param['value'] will be ast: Consdecl
             if not var.isConst:
-                raise TypeMismatchInConstant(param['value'])
+                raise IllegalConstantExpression(ast)
         return var.type
 
 
