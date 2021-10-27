@@ -516,9 +516,6 @@ class StaticChecker(BaseVisitor):
             rhs = self.visit(decl.value,new_order)
             if not UsefulTool.validConvertType(decl.constType,rhs,StaticChecker.classDictionary):
                 raise TypeMismatchInConstant(decl)
-
-            UsefulTool.inspectError(rhs)    
-
         else:
             new_order = {'local_id':[],'scope': Class,'type':Attribute,'value':ast.decl,'this':classname}
             if ast.decl.varInit: self.visit(ast.decl.varInit,new_order)
@@ -599,6 +596,8 @@ class StaticChecker(BaseVisitor):
             method =  param['method']
             for i in ast.decl:
                 if type(i) == VarDecl:
+                    new_order = {'local_id':current_scope,'scope':param['scope'],'type':Variable,'value':i,'this':param['this']}
+                    self.visit(i,new_order)
                     current_scope[0].append(block.getVar(i.variable.name))
                 elif type(i) == ConstDecl:
                     new_order = {'local_id':current_scope,'scope':Block,'type':Constant,'this':param['this']}
@@ -639,6 +638,9 @@ class StaticChecker(BaseVisitor):
                 elif type(i) == CallStmt:
                     new_order = {'local_id':current_scope,'this':param['this']}
                     self.visit(i,new_order)
+
+    def visitVarDecl(self, ast:VarDecl, param):
+        self.visit(ast.varInit,param)
 
     def visitConstDecl(self, ast:ConstDecl, param:dict):
         # param =  {'local_id':current_scope,'scope':param['scope'],'value':ConstDecl,'this':param['this']}
@@ -953,6 +955,8 @@ class StaticChecker(BaseVisitor):
                 j:MemVar
                 if j.name == ast.name:
                     return j.type
+        if StaticChecker.classDictionary[ast.name]:
+                return ClassType(ast)
         raise Undeclared(Identifier(),ast.name)
 
 
