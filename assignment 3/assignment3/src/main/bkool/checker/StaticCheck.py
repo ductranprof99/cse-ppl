@@ -320,6 +320,7 @@ class UsefulTool():
                         x.eleparent = startNode.name
                         glob_env.append(x)
                         currrent_name.append(i.name)
+        
         return result
     @staticmethod
     def getMethod(classDict,method):
@@ -336,9 +337,12 @@ class UsefulTool():
         if (type(lhs) == FloatType) and (type(rhs) not in [IntType,FloatType]):
             return False
         if type(lhs) == ClassType:
+           
             if type(rhs) != ClassType:
                 return False
-            if lhs.classname.name not in classDict[rhs.classname.name]['father']:
+            if rhs.classname.name == 'nil':
+                return True
+            elif lhs.classname.name not in classDict[rhs.classname.name]['father']:
                 return False
         if (type(lhs) == ArrayType):
             if type(rhs) != ArrayType:
@@ -385,6 +389,7 @@ class VariableLoad(BaseVisitor):
         return self.visit(self.ast,self.global_envi)
 
     def visitProgram(self, ast:Program, param:list):
+        self.classDictionary['nil'] = {'father':[],'method':[],'attribute':[]}
         for i in ast.decl:
             param += [self.visit(i,param)]
             self.classCount += 1
@@ -435,7 +440,7 @@ class VariableLoad(BaseVisitor):
 
     def visitConstDecl(self, ast:ConstDecl, param):
         if param:
-            return VarSymbol(name=ast.constant.name,class_name=param,type=ast.constType,isConst=True)
+            return VarSymbol(name=ast.constant.name,class_name=param,vartype=ast.constType,isConst=True)
         return MemVar(isConst=True,name=ast.constant.name,type=ast.constType)
     
     def visitBlock(self, ast:Block, param):
@@ -473,7 +478,7 @@ class StaticChecker(BaseVisitor):
     global_class = []
     global_att = []
     global_method = []
-    classDictionary = {'nil': {'father':[],'method':[],'attribute':[]}}
+    classDictionary = {}
             
     def __init__(self,ast):
         self.ast = ast
@@ -489,6 +494,8 @@ class StaticChecker(BaseVisitor):
             else:
                 StaticChecker.global_att.append(i)
         StaticChecker.classDictionary = t.classDictionary
+
+
         return self.visit(self.ast,[])
 
     def visitProgram(self,ast:Program, glob_env): 
@@ -513,6 +520,7 @@ class StaticChecker(BaseVisitor):
                 raise IllegalConstantExpression(None)
             new_order = {'local_id':[],'scope': Class,'type':Constant,'value':decl.value,'this':classname}
             rhs = self.visit(decl.value,new_order)
+            
             if not UsefulTool.validConvertType(decl.constType,rhs,StaticChecker.classDictionary):
                 raise TypeMismatchInConstant(decl)
         else:
@@ -673,7 +681,7 @@ class StaticChecker(BaseVisitor):
             raise TypeMismatchInStatement(ast)
         new_order = {'local_id':param['local_id'],'scope':Method,'type':Return,'value':ast,'this':param['this']}
         x = self.visit(ast.expr,new_order)
-        if type(return_type) != type(x):
+        if not UsefulTool.validConvertType(return_type,x,StaticChecker.classDictionary):
             raise TypeMismatchInStatement(ast)
     
     def visitAssign(self, ast:Assign, param):
